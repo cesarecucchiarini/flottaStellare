@@ -70,8 +70,7 @@ public class Astronave {
     }
 
     public void aggiungiModulo(Modulo modulo) {
-        if(moduli.get(modulo.getTipo()).getMaxSalute() < modulo.getMaxSalute())
-            moduli.put(modulo.getTipo(), modulo);
+        moduli.put(modulo.getTipo(), modulo);
     }
 
     public boolean scansionaModulo(Modulo modulo){
