@@ -2,8 +2,9 @@ public class Membro {
     private String nome;
     private Ruoli ruolo;
     private boolean stato = true;
+    private Astronave astronave;
 
-    public Membro(String nome, Ruoli ruolo) {
+    public Membro(String nome, Ruoli ruolo){
         this.nome = nome;
         this.ruolo = ruolo;
     }
@@ -22,5 +23,10 @@ public class Membro {
 
     public void morte() {
         this.stato = false;
+        this.astronave.distruggiNave();
+    }
+
+    public void setAstronave(Astronave astronave) {
+        this.astronave = astronave;
     }
 }

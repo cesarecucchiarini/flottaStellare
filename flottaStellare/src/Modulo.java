@@ -2,6 +2,7 @@ public class Modulo {
     private int salute, maxSalute;
     private TipiModulo tipo;
     private boolean stato = true;
+    private Astronave astronave;
 
     public Modulo(int maxSalute, TipiModulo tipo) {
         this.salute = this.maxSalute = maxSalute;
@@ -23,6 +24,7 @@ public class Modulo {
 
     public void distruggi(){
         this.stato=false;
+        astronave.distruggiNave();
     }
 
     public int getSalute() {
@@ -33,7 +35,13 @@ public class Modulo {
         return maxSalute;
     }
 
-    public void ripara() {
+    public int ripara() {
+        int tempo = maxSalute-salute;
         this.salute = this.maxSalute;
+        return tempo;
+    }
+
+    public void setAstronave(Astronave astronave) {
+        this.astronave = astronave;
     }
 }

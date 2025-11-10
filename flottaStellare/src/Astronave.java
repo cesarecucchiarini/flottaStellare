@@ -1,5 +1,7 @@
+
 import java.util.*;
 import java.util.stream.Collectors;
+
 public class Astronave {
     private String nome;
     private boolean stato = true;
@@ -22,13 +24,15 @@ public class Astronave {
     }
 
     public void distruggiNave() {
-        for(Membro membro : membri) {
-            membro.morte();
+        if(this.getMembriVivi().isEmpty() || !this.moduli.get(TipiModulo.PILOTAGGIO).getStato()){
+            for(Membro membro : membri) {
+                membro.morte();
+            }
+            for(Modulo modulo : moduli.values()) {
+                modulo.distruggi();
+            }
+            this.stato = false;
         }
-        for(Modulo modulo : moduli.values()) {
-            modulo.distruggi();
-        }
-        this.stato = false;
     }
 
     public ArrayList<Modulo> getModuli() {
@@ -65,12 +69,15 @@ public class Astronave {
     }
 
     public void aggiungiMembro(Membro membro) {
-        if(membro.getRuolo() != Ruoli.CAPITANO)
+        if(membro.getRuolo() != Ruoli.CAPITANO){
             membri.add(membro);
+            membro.setAstronave(this);
+        }
     }
 
     public void aggiungiModulo(Modulo modulo) {
         moduli.put(modulo.getTipo(), modulo);
+        modulo.setAstronave(this);
     }
 
     public boolean scansionaModulo(Modulo modulo){
@@ -84,12 +91,23 @@ public class Astronave {
 
     public void morteMembri() {
         getMembriVivi().get(new Random().nextInt(getMembriVivi().size())).morte();
-        if(getMembriVivi().size() == 0) {
-            this.distruggiNave();
-        }
     }
 
     public ArrayList<Membro> getMembriVivi() {
         return membri.stream().filter(m -> m.getStato()).collect(Collectors.toCollection(ArrayList::new));
+    }
+    
+    public ArrayList<Modulo> getModuliIntatti(){
+        return moduli.values().stream().filter(m -> m.getStato()).collect(Collectors.toCollection(ArrayList::new));
+    }
+    
+    public ArrayList<Modulo> getModuliDanneggiati(){
+        return moduli.values().stream().filter(m -> m.getStato() && m.getSalute()<m.getMaxSalute()).collect(Collectors.toCollection(ArrayList::new));
+    }
+    
+    public void inizializza(){
+        moduli.get(TipiModulo.PILOTAGGIO).setAstronave(this);
+        moduli.get(TipiModulo.ABITATIVO).setAstronave(this);
+        membri.get(0).setAstronave(this);
     }
 }
