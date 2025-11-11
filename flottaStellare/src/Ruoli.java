@@ -3,5 +3,6 @@ public enum Ruoli {
     INGEGNERE,
     SCIENZIATO,
     MEDICO,
-    SOLDATO
+    SOLDATO,
+    NIENTE
 }

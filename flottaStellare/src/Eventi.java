@@ -8,8 +8,8 @@ public enum Eventi {
     INTRUSIONE_ALIENA,
     CONTAMINAZIONE;
     
-    public static Eventi(){
+    public static Eventi getEvento(){
         Random rnd = new Random();
-        //finire
+        return rnd.nextInt(2)==1 ? values()[rnd.nextInt(4)+1] : NIENTE;
     }
 }

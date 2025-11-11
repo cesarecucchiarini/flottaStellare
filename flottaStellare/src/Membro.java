@@ -29,4 +29,8 @@ public class Membro {
     public void setAstronave(Astronave astronave) {
         this.astronave = astronave;
     }
+    
+    public void togliRuolo(){
+        this.ruolo=Ruoli.NIENTE;
+    }
 }

@@ -15,6 +15,8 @@ public class Flotta {
     
     public void aggiungiAstronave(Astronave nave){
         this.astronavi.add(nave);
+        nave.setFlotta(this);
+        razioni*=nave.getMembriVivi().size();
     }
     
     public void pasto(){
@@ -54,14 +56,15 @@ public class Flotta {
         int tempoAggiunto=0, ingegneri=0;
         for(Astronave astronave : this.getAstronaviIntatte()){
             ingegneri+=astronave.getIngegneri().size();
+            
             for(Modulo modulo : astronave.getModuliDanneggiati()){
                 tempoAggiunto+=modulo.ripara();
             }
         }
-        return (int)tempoAggiunto/ingegneri;
+        return (int)tempoAggiunto/ingegneri+1;
     }
     
     public Eventi evento(){
-        
+        return Eventi.getEvento();
     }
 }

@@ -7,6 +7,7 @@ public class Astronave {
     private boolean stato = true;
     private HashMap<TipiModulo, Modulo> moduli = new HashMap<>();
     private ArrayList<Membro> membri = new ArrayList<>();
+    private Flotta flotta;
 
     public Astronave(String nome) {
         this.nome = nome;
@@ -14,7 +15,11 @@ public class Astronave {
         moduli.put(TipiModulo.ABITATIVO, new Modulo(100, TipiModulo.ABITATIVO));
         membri.add(new Membro("Cap", Ruoli.CAPITANO));
     }
-
+    
+    public void setFlotta(Flotta flotta){
+        this.flotta = flotta;
+    }
+    
     public String getNome() {
         return nome;
     }
@@ -22,11 +27,16 @@ public class Astronave {
     public boolean getStato() {
         return stato;
     }
-
+    
+    //i membri non muoiono
     public void distruggiNave() {
+        Random rnd = new Random();
         if(this.getMembriVivi().isEmpty() || !this.moduli.get(TipiModulo.PILOTAGGIO).getStato()){
-            for(Membro membro : membri) {
-                membro.morte();
+            membri.get(0).togliRuolo();
+            while(membri.size()>0){
+                Astronave nave = flotta.getAstronaviIntatte().get(rnd.nextInt(flotta.getAstronaviIntatte().size()));
+                nave.aggiungiMembro(membri.get(0));
+                this.rimuoviMembro(membri.get(0));
             }
             for(Modulo modulo : moduli.values()) {
                 modulo.distruggi();
@@ -69,10 +79,10 @@ public class Astronave {
     }
 
     public void aggiungiMembro(Membro membro) {
-        if(membro.getRuolo() != Ruoli.CAPITANO){
+        if(membro.getRuolo() != Ruoli.CAPITANO)
+            membro.togliRuolo();
             membri.add(membro);
             membro.setAstronave(this);
-        }
     }
 
     public void aggiungiModulo(Modulo modulo) {
@@ -82,11 +92,6 @@ public class Astronave {
 
     public boolean scansionaModulo(Modulo modulo){
         return modulo.getStato() && modulo.getSalute() < modulo.getMaxSalute();
-    }
-
-    public double riparaModulo(int ingegneri, Modulo modulo){
-        modulo.ripara();
-        return (modulo.getMaxSalute() - modulo.getSalute())/ ingegneri;
     }
 
     public void morteMembri() {
@@ -109,5 +114,9 @@ public class Astronave {
         moduli.get(TipiModulo.PILOTAGGIO).setAstronave(this);
         moduli.get(TipiModulo.ABITATIVO).setAstronave(this);
         membri.get(0).setAstronave(this);
+    }
+    
+    public void rimuoviMembro(Membro membro){
+        this.membri.remove(membro);
     }
 }
