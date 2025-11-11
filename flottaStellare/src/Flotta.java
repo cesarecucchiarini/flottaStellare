@@ -43,6 +43,7 @@ public class Flotta {
         }
     }
     
+    //farlo prima sulla difesa
     public void danniStrutturali(int danni){
         Random rnd = new Random();
         for(int i=0; i<danni; i+=10){
@@ -53,10 +54,9 @@ public class Flotta {
     }
     
     public int scansionaModuli(){
-        int tempoAggiunto=0, ingegneri=0;
-        for(Astronave astronave : this.getAstronaviIntatte()){
-            ingegneri+=astronave.getIngegneri().size();
-            
+        int tempoAggiunto=0;
+        int ingegneri=this.getMembriTipo(Ruoli.INGEGNERE).size();
+        for(Astronave astronave : this.getAstronaviIntatte()){            
             for(Modulo modulo : astronave.getModuliDanneggiati()){
                 tempoAggiunto+=modulo.ripara();
             }
@@ -66,5 +66,21 @@ public class Flotta {
     
     public Eventi evento(){
         return Eventi.getEvento();
+    }
+
+    public ArrayList<Membro> getMembriTipo(Ruoli ruolo){
+        ArrayList<Membro> membri = new ArrayList<>();
+        for(Astronave astronave : this.getAstronaviIntatte()){
+            membri.addAll(astronave.getMembri().stream().filter(m -> m.getRuolo() == ruolo).collect(Collectors.toCollection(ArrayList::new)));
+        }
+        return membri;
+    }
+
+    public ArrayList<Modulo> getModuliTipo(TipiModulo tipo){
+        ArrayList<Modulo> moduli = new ArrayList<>();
+        for(Astronave astronave : this.getAstronaviIntatte()){
+            moduli.addAll(astronave.getModuli().stream().filter(m -> m.getTipo() == tipo).collect(Collectors.toCollection(ArrayList::new)));
+        }
+        return moduli;
     }
 }

@@ -11,15 +11,15 @@ public class Soluzione {
         giorniAggiunti = (int) Math.floor(rnd.nextInt(10)/(capitani+1));
     }
     
-    public static void battaglia(int soldati, boolean modulo){
-        morti = (int) Math.floor(rnd.nextInt(30)/(soldati+1)) - (modulo ? 15 : 0);
+    public static void battaglia(int soldati, int moduli){
+        morti = (int) Math.floor(rnd.nextInt(30)/(soldati+moduli+1));
         giorniAggiunti = rnd.nextInt(5)+1;
-        danniSubiti = giorniAggiunti*15 - (modulo ? giorniAggiunti*4 : 0);
+        danniSubiti = giorniAggiunti*15 - moduli*4;
     }
     
-    public static void controlloMembri(int scienziati, boolean modulo){
-        giorniAggiunti = (int) Math.floor((rnd.nextInt(10)+2)/(scienziati+1)) - (modulo ? 3 : 0);
-        morti = rnd.nextInt(modulo ? 3 : 6);
+    public static void controlloMembri(int scienziati, int moduli){
+        giorniAggiunti = (int) Math.floor((rnd.nextInt(10)+2)/(scienziati+moduli+1));
+        morti = rnd.nextInt(6)-moduli;
     }
     
     public static void viaggioMeteorico(int capitani){
@@ -36,9 +36,9 @@ public class Soluzione {
         morti = rnd.nextInt(10);
     }
     
-    public static void antibiotico(int medici, boolean modulo){
-        giorniAggiunti = (int) Math.floor((rnd.nextInt(5)+1)/(medici+1)) - (modulo ? 2 : 0);
-        morti = (int) Math.floor(rnd.nextInt(15)/(medici+1)) - (modulo ? 3 : 0);
+    public static void antibiotico(int medici, int moduli){
+        giorniAggiunti = (int) Math.floor((rnd.nextInt(5)+1)/(medici+moduli+1));
+        morti = (int) Math.floor(rnd.nextInt(15)/(medici+moduli+1));
     }
     
     public static int getMorti(){

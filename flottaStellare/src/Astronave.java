@@ -30,8 +30,8 @@ public class Astronave {
     
     //i membri non muoiono
     public void distruggiNave() {
-        Random rnd = new Random();
         if(this.getMembriVivi().isEmpty() || !this.moduli.get(TipiModulo.PILOTAGGIO).getStato()){
+            Random rnd = new Random();
             membri.get(0).togliRuolo();
             while(membri.size()>0){
                 Astronave nave = flotta.getAstronaviIntatte().get(rnd.nextInt(flotta.getAstronaviIntatte().size()));
@@ -51,31 +51,6 @@ public class Astronave {
 
     public ArrayList<Membro> getMembri() {
         return membri;
-    }
-
-    public ArrayList<Membro> getIngegneri() {
-        return membri.stream().filter(m -> m.getRuolo() == Ruoli.INGEGNERE).collect(Collectors.toCollection(ArrayList::new));
-    }
-
-    public ArrayList<Membro> getMedici() {
-        return membri.stream().filter(m -> m.getRuolo() == Ruoli.MEDICO).collect(Collectors.toCollection(ArrayList::new));
-    }   
-
-    public ArrayList<Membro> getSoldati() {
-        return membri.stream().filter(m -> m.getRuolo() == Ruoli.SOLDATO).collect(Collectors.toCollection(ArrayList::new));
-    }
-
-    public ArrayList<Membro> getScienziati() {
-        return membri.stream().filter(m -> m.getRuolo() == Ruoli.SCIENZIATO).collect(Collectors.toCollection(ArrayList::new));
-    }
-
-    public Membro getCapitano() {
-        for (Membro m : membri) {
-            if (m.getRuolo() == Ruoli.CAPITANO) {
-                return m;
-            }
-        }
-        return null;
     }
 
     public void aggiungiMembro(Membro membro) {

@@ -31,6 +31,6 @@ public class Membro {
     }
     
     public void togliRuolo(){
-        this.ruolo=Ruoli.NIENTE;
+        this.ruolo=Ruoli.getRuolo();
     }
 }
