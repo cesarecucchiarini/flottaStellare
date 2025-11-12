@@ -3,5 +3,11 @@ public enum TipiModulo {
     COMBATTIVO,
     INFERMERIA,
     PROTETTIVO,
-    ABITATIVO
+    ABITATIVO;
+
+    public static void printTipi(){
+        for(TipiModulo tipo : TipiModulo.values()){
+            System.out.println(tipo.ordinal()+" - "+tipo.name());
+        }
+    }
 }

@@ -13,6 +13,10 @@ public class Flotta {
         this.razioni = razioni;
     }
     
+    public String getNome() {
+        return nome;
+    }
+
     public void aggiungiAstronave(Astronave nave){
         this.astronavi.add(nave);
         nave.setFlotta(this);
@@ -28,6 +32,7 @@ public class Flotta {
                     membro.morte();
             }
         }
+        System.out.println("Il pasto si è concluso, razioni rimaste nella flotta: "+ razioni);
     }
     
     public ArrayList<Astronave> getAstronaviIntatte(){
@@ -43,12 +48,17 @@ public class Flotta {
         }
     }
     
-    //farlo prima sulla difesa
     public void danniStrutturali(int danni){
         Random rnd = new Random();
         for(int i=0; i<danni; i+=10){
             ArrayList<Astronave> navi = this.getAstronaviIntatte();
             ArrayList<Modulo> moduli = navi.get(rnd.nextInt(navi.size())).getModuliIntatti();
+            for(Modulo m : moduli){
+                if(m.getTipo() == TipiModulo.PROTETTIVO && m.getStato()){
+                    m.subisciDanno(10);
+                    break;
+                }
+            }
             moduli.get(rnd.nextInt(moduli.size())).subisciDanno(10);
         }
     }
@@ -61,11 +71,8 @@ public class Flotta {
                 tempoAggiunto+=modulo.ripara();
             }
         }
-        return (int)tempoAggiunto/ingegneri+1;
-    }
-    
-    public Eventi evento(){
-        return Eventi.getEvento();
+        System.out.println("La scansione e' terminata, tempo di riparazione ridotto di: " + (int)tempoAggiunto/(ingegneri+1) + " turni.");
+        return (int)tempoAggiunto/(ingegneri+1);
     }
 
     public ArrayList<Membro> getMembriTipo(Ruoli ruolo){

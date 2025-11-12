@@ -47,7 +47,7 @@ public class Soluzione {
         return t;
     }
     
-    public static int getdaniSubiti(){
+    public static int getdanniSubiti(){
         int t = danniSubiti;
         danniSubiti=0;
         return t;

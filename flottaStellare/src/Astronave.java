@@ -17,6 +17,7 @@ public class Astronave {
     }
     
     public void setFlotta(Flotta flotta){
+        System.out.println(this + " e' stata aggiunta alla flotta " + flotta.getNome());
         this.flotta = flotta;
     }
     
@@ -28,7 +29,6 @@ public class Astronave {
         return stato;
     }
     
-    //i membri non muoiono
     public void distruggiNave() {
         if(this.getMembriVivi().isEmpty() || !this.moduli.get(TipiModulo.PILOTAGGIO).getStato()){
             Random rnd = new Random();
@@ -41,6 +41,7 @@ public class Astronave {
             for(Modulo modulo : moduli.values()) {
                 modulo.distruggi();
             }
+            System.out.println(this + " e' stata distrutta!");
             this.stato = false;
         }
     }
@@ -56,8 +57,8 @@ public class Astronave {
     public void aggiungiMembro(Membro membro) {
         if(membro.getRuolo() != Ruoli.CAPITANO)
             membro.togliRuolo();
-            membri.add(membro);
-            membro.setAstronave(this);
+        membri.add(membro);
+        membro.setAstronave(this);
     }
 
     public void aggiungiModulo(Modulo modulo) {
@@ -93,5 +94,10 @@ public class Astronave {
     
     public void rimuoviMembro(Membro membro){
         this.membri.remove(membro);
+    }
+
+    @Override
+    public String toString() {
+        return "Astronave chiamata " + nome + " della flotta " + (flotta != null ? "\'" + flotta.getNome() + "\'" : "nessuna");
     }
 }
