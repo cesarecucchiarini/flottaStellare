@@ -15,6 +15,10 @@ public class Viaggio {
     public void aumentaGiorni(int giorni) {
         this.giorniViaggio += giorni;
     }
+    
+    public int getGiorniRimasti(){
+        return giorniViaggio;
+    }
 
     public void risolviEvento(Eventi e){
         switch (e) {
