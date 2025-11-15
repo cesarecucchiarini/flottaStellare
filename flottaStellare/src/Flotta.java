@@ -5,22 +5,27 @@ import java.util.Random;
 
 public class Flotta {
     private String nome;
-    private int razioni;
+    private int razioni=0;
+    private int razioniNave;
     ArrayList<Astronave> astronavi = new ArrayList<>();
 
-    public Flotta(String nome, int razioni) {
+    public Flotta(String nome, int razioniNave) {
         this.nome = nome;
-        this.razioni = razioni;
+        this.razioniNave = razioniNave;
     }
     
     public String getNome() {
         return nome;
     }
+    
+    public int getRazioni(){
+        return razioni;
+    }
 
     public void aggiungiAstronave(Astronave nave){
         this.astronavi.add(nave);
         nave.setFlotta(this);
-        razioni*=nave.getMembriVivi().size();
+        razioni+=razioniNave*nave.getMembriVivi().size();
     }
     
     public void pasto(){

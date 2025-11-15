@@ -1,5 +1,5 @@
 
-import javax.swing.JFrame;
+import javax.swing.*;
 
 public class FlottaStellareUI extends javax.swing.JFrame {
     
@@ -8,12 +8,86 @@ public class FlottaStellareUI extends javax.swing.JFrame {
     /**
      * Creates new form FlottaStellareUI
      */
-    public FlottaStellareUI() {
+    Viaggio viaggio;
+    DefaultListModel<String> listaNavi = new DefaultListModel<String>();
+    DefaultListModel<String> listaMembri = new DefaultListModel<String>();
+    DefaultListModel<String> listaModuli = new DefaultListModel<String>();
+    public FlottaStellareUI(){
         initComponents();
         this.setExtendedState(JFrame.MAXIMIZED_BOTH);
         this.setVisible(true);
     }
+    
+    public String creaFinestraDialogo(String contesto){
+        final String[] input={null};
+        JDialog dialog = new JDialog(this, contesto, true);
+        dialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
 
+        JPanel panel = new JPanel();
+        JTextField textField = new JTextField(20);
+        JButton okButton = new JButton("OK");
+
+        okButton.addActionListener(e -> {
+        if (!textField.getText().trim().isEmpty()) {
+            input[0] = textField.getText();
+            dialog.dispose();
+        } else {
+            JOptionPane.showMessageDialog(dialog, "Input required!");
+        }
+        });
+
+        panel.add(new JLabel("Enter text:"));
+        panel.add(textField);
+        panel.add(okButton);
+
+        dialog.add(panel);
+        dialog.pack();
+        dialog.setLocationRelativeTo(null);
+        dialog.setVisible(true);
+        return input[0];
+    }
+    
+    public String stringInput(String contesto){
+        String input="";
+        while(input.trim().length()==0){
+            input = creaFinestraDialogo(contesto);
+        }
+        return input;
+    }
+    public int intInput(String contesto){
+        int input=0;
+        while(input<=0){
+            try{
+                input = Integer.parseInt(creaFinestraDialogo(contesto));
+            }catch(Exception e){}
+        }
+        return input;
+    }
+    public Ruoli ruoloInput(String contesto){
+        String ruolo="";
+        while(!Ruoli.ruoloEsistente(ruolo)){
+            ruolo = creaFinestraDialogo(contesto);
+        }
+        return Ruoli.fromString(ruolo);
+    }
+    
+    
+    public void inizializzazione(){
+        Flotta f = new Flotta(stringInput("Dimmi il nome della flotta"), intInput("Dimmi il numero di razioni per membro"));
+        viaggio = new Viaggio(intInput("Dimmi il numero di giorni"), f);
+        jLabel1.setText("Nome della flotta: "+viaggio.getFlotta().getNome());
+        lbl_giorniRimasti.setText("giorni rimasti: "+ viaggio.getGiorniRimasti());
+        lbl_razioniRimaste.setText("razioni rimaste: "+ viaggio.getFlotta().getRazioni());
+        
+        lst_navi.setModel(listaNavi);
+        lst_moduli.setModel(listaModuli);
+        lst_membri.setModel(listaMembri);
+    }
+    
+    public void mostraMessaggio(String m){
+        JOptionPane.showMessageDialog(this, m, "Dialog Title", JOptionPane.INFORMATION_MESSAGE);
+    }
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -23,61 +97,159 @@ public class FlottaStellareUI extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jPanel1 = new javax.swing.JPanel();
-        jPanel3 = new javax.swing.JPanel();
-        jPanel2 = new javax.swing.JPanel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        lst_navi = new javax.swing.JList<>();
+        btn_aggiungiNave = new javax.swing.JButton();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        lst_moduli = new javax.swing.JList<>();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        lst_membri = new javax.swing.JList<>();
+        jLabel1 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
+        jLabel5 = new javax.swing.JLabel();
+        lbl_ruolo = new javax.swing.JLabel();
+        lbl_salute = new javax.swing.JLabel();
+        lbl_razioniRimaste = new javax.swing.JLabel();
+        lbl_giorniRimasti = new javax.swing.JLabel();
+        btn_aggiungiNave1 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        getContentPane().setLayout(null);
 
-        jPanel1.setBackground(new java.awt.Color(255, 0, 0));
+        lst_navi.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
+            public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
+                lst_naviValueChanged(evt);
+            }
+        });
+        jScrollPane1.setViewportView(lst_navi);
 
-        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
-        jPanel3.setLayout(jPanel3Layout);
-        jPanel3Layout.setHorizontalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 100, Short.MAX_VALUE)
-        );
-        jPanel3Layout.setVerticalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 185, Short.MAX_VALUE)
-        );
+        getContentPane().add(jScrollPane1);
+        jScrollPane1.setBounds(10, 110, 440, 430);
 
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
-        );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(108, 108, 108)
-                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(443, Short.MAX_VALUE))
-        );
+        btn_aggiungiNave.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        btn_aggiungiNave.setText("Aggiungi una nave");
+        btn_aggiungiNave.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btn_aggiungiNaveMouseClicked(evt);
+            }
+        });
+        getContentPane().add(btn_aggiungiNave);
+        btn_aggiungiNave.setBounds(70, 550, 220, 40);
 
-        getContentPane().add(jPanel1, java.awt.BorderLayout.LINE_START);
+        lst_moduli.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
+            public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
+                lst_moduliValueChanged(evt);
+            }
+        });
+        jScrollPane2.setViewportView(lst_moduli);
 
-        jPanel2.setBackground(new java.awt.Color(102, 255, 51));
+        getContentPane().add(jScrollPane2);
+        jScrollPane2.setBounds(490, 350, 230, 190);
 
-        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
-        jPanel2.setLayout(jPanel2Layout);
-        jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 876, Short.MAX_VALUE)
-        );
-        jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 736, Short.MAX_VALUE)
-        );
+        lst_membri.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
+            public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
+                lst_membriValueChanged(evt);
+            }
+        });
+        jScrollPane3.setViewportView(lst_membri);
 
-        getContentPane().add(jPanel2, java.awt.BorderLayout.CENTER);
+        getContentPane().add(jScrollPane3);
+        jScrollPane3.setBounds(490, 110, 230, 200);
+
+        jLabel1.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
+        jLabel1.setText("Nome della flotta:");
+        getContentPane().add(jLabel1);
+        jLabel1.setBounds(240, 10, 430, 40);
+
+        jLabel2.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel2.setText("moduli");
+        getContentPane().add(jLabel2);
+        jLabel2.setBounds(570, 320, 70, 20);
+
+        jLabel3.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel3.setText("navi");
+        getContentPane().add(jLabel3);
+        jLabel3.setBounds(200, 80, 37, 20);
+
+        jLabel5.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        jLabel5.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel5.setText("membri");
+        getContentPane().add(jLabel5);
+        jLabel5.setBounds(570, 80, 70, 20);
+
+        lbl_ruolo.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        lbl_ruolo.setText("ruolo:");
+        getContentPane().add(lbl_ruolo);
+        lbl_ruolo.setBounds(730, 200, 160, 20);
+
+        lbl_salute.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        lbl_salute.setText("salute:");
+        getContentPane().add(lbl_salute);
+        lbl_salute.setBounds(730, 430, 160, 20);
+
+        lbl_razioniRimaste.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        lbl_razioniRimaste.setText("razioni rimaste:");
+        getContentPane().add(lbl_razioniRimaste);
+        lbl_razioniRimaste.setBounds(800, 50, 230, 25);
+
+        lbl_giorniRimasti.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        lbl_giorniRimasti.setText("giorni rimasti: ");
+        getContentPane().add(lbl_giorniRimasti);
+        lbl_giorniRimasti.setBounds(800, 20, 230, 25);
+
+        btn_aggiungiNave1.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        btn_aggiungiNave1.setText("Aggiungi un membro");
+        btn_aggiungiNave1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btn_aggiungiNave1MouseClicked(evt);
+            }
+        });
+        getContentPane().add(btn_aggiungiNave1);
+        btn_aggiungiNave1.setBounds(70, 600, 220, 40);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void btn_aggiungiNaveMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_aggiungiNaveMouseClicked
+        if(!viaggio.aggiungiNave(stringInput("Dimmi il nome della nave"))){
+            mostraMessaggio("Impossibile aggiungere una nave con tale nome");
+            return;
+        }
+        mostraMessaggio("Nave aggiunta");
+        listaNavi.addElement(viaggio.getNavi().getLast().getNome());
+        lbl_razioniRimaste.setText("razioni rimaste: "+ viaggio.getFlotta().getRazioni());
+    }//GEN-LAST:event_btn_aggiungiNaveMouseClicked
+
+    private void lst_naviValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_lst_naviValueChanged
+        Astronave a = viaggio.getFlotta().getAstronaviIntatte().get(lst_navi.getSelectedIndex());
+        listaModuli.clear();
+        listaMembri.clear();
+        for(Modulo m : a.getModuliIntatti()){
+            listaModuli.addElement(m.getTipo().name());
+        }
+        for(Membro m : a.getMembriVivi()){
+            listaMembri.addElement(m.getNome());
+        }
+    }//GEN-LAST:event_lst_naviValueChanged
+
+    private void lst_membriValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_lst_membriValueChanged
+        lst_moduli.clearSelection();
+        lbl_salute.setText("salute:");
+        lbl_ruolo.setText("ruolo: " + viaggio.getFlotta().getAstronaviIntatte().get(lst_navi.getSelectedIndex()).getMembriVivi().get(lst_membri.getSelectedIndex()).getRuolo().name());
+    }//GEN-LAST:event_lst_membriValueChanged
+
+    private void lst_moduliValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_lst_moduliValueChanged
+        lst_membri.clearSelection();
+        lbl_ruolo.setText("ruolo:");
+        lbl_salute.setText("salute: " + viaggio.getFlotta().getAstronaviIntatte().get(lst_navi.getSelectedIndex()).getModuliIntatti().get(lst_moduli.getSelectedIndex()).getSalute());
+    }//GEN-LAST:event_lst_moduliValueChanged
+
+    private void btn_aggiungiNave1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_aggiungiNave1MouseClicked
+        viaggio.aggiungiMembro(lst_navi.getSelectedIndex(), stringInput("Dimmi il ruolo del membro"), stringInput("Dimmi il nome del membro"));
+    }//GEN-LAST:event_btn_aggiungiNave1MouseClicked
 
     /**
      * @param args the command line arguments
@@ -105,8 +277,21 @@ public class FlottaStellareUI extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel2;
-    private javax.swing.JPanel jPanel3;
+    private javax.swing.JButton btn_aggiungiNave;
+    private javax.swing.JButton btn_aggiungiNave1;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JLabel lbl_giorniRimasti;
+    private javax.swing.JLabel lbl_razioniRimaste;
+    private javax.swing.JLabel lbl_ruolo;
+    private javax.swing.JLabel lbl_salute;
+    private javax.swing.JList<String> lst_membri;
+    private javax.swing.JList<String> lst_moduli;
+    private javax.swing.JList<String> lst_navi;
     // End of variables declaration//GEN-END:variables
 }

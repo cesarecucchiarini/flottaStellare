@@ -1,4 +1,5 @@
 
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Viaggio {
@@ -18,6 +19,14 @@ public class Viaggio {
     
     public int getGiorniRimasti(){
         return giorniViaggio;
+    }
+    
+    public Flotta getFlotta(){
+        return flotta;
+    }
+    
+    public ArrayList<Astronave> getNavi(){
+        return flotta.getAstronaviIntatte();
     }
 
     public void risolviEvento(Eventi e){
@@ -76,41 +85,12 @@ public class Viaggio {
         scanner.close();
     }
 
-    public void preparaViaggio(){
-        boolean prepara = true;
-        while(prepara){
-        System.out.println("Vuoi:\n"+"-1 creare una nave\n"+"-2 aggiungere un modulo ad una nave\n"+
-            "-3 aggiungere un membro ad una nave\n"+"-4 iniziare il viaggio");
-        switch(scanner.next()){
-            case "1":
-                aggiungiNave();
-                break;
-            case "2":
-                aggiungiModulo();
-                break;
-            case "3":
-                aggiungiMembro();
-                break;
-            case "4":
-                prepara = false;
-                break;
-            default:
-                System.out.println("Scelta non valida.");
-                break;
-            }
-            
-        }
-        
-    }
-
-    public void aggiungiNave(){
-        System.out.println("Dimmi il nome della nave:");
-        String nomeNave = scanner.next();
-        if(nomeNave.isEmpty() || flotta.getAstronaviIntatte().stream().anyMatch(n -> n.getNome().equals(nomeNave))){
-            System.out.println("Nome non valido.");
-            return;
+    public boolean aggiungiNave(String nomeNave){
+        if(flotta.getAstronaviIntatte().stream().anyMatch(n -> n.getNome().equals(nomeNave))){
+            return false;
         }
         flotta.aggiungiAstronave(new Astronave(nomeNave));
+        return true;
     }
 
     public void aggiungiModulo(){
@@ -128,24 +108,12 @@ public class Viaggio {
         }
     }
 
-    private void aggiungiMembro(){
-        for(int i=0; i<flotta.getAstronaviIntatte().size(); i++){
-            System.out.println(i+" - "+flotta.getAstronaviIntatte().get(i).getNome());
+    private boolean aggiungiMembro(int index, Ruoli ruolo, String nomeMembro){
+        for(Membro m : flotta.getAstronaviIntatte().get(index).getMembriVivi()){
+            if(m.getNome().equals(nomeMembro))
+                return false;
         }
-        System.out.println("Seleziona la nave (numero) a cui vuoi aggiungere un membro:");
-        int naveIdx = scanner.nextInt();
-        System.out.println("Dimmi il nome del membro:");
-        Ruoli.printRuoli();
-        System.out.println("Seleziona il nome e il ruolo (numero) del membro da aggiungere:");
-        String nomeMembro = scanner.next();
-        if(nomeMembro.isEmpty()){
-            System.out.println("Nome non valido.");
-            return;
-        }
-        try{
-        flotta.getAstronaviIntatte().get(naveIdx).aggiungiMembro(new Membro(nomeMembro, Ruoli.values()[scanner.nextInt()]));
-        } catch (ArrayIndexOutOfBoundsException e){
-            System.out.println("Inserimento non valido.");
-        }
+        flotta.getAstronaviIntatte().get(index).aggiungiMembro(new Membro(nomeMembro, ruolo));
+        return true;
     }
 }

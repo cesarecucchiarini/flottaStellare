@@ -12,9 +12,21 @@ public enum Ruoli {
         return values()[new Random().nextInt(values().length-1)+1];
     }
 
-    public static void printRuoli(){
-        for(Ruoli ruolo : Ruoli.values()){
-            System.out.println(ruolo.ordinal()+" - "+ruolo.name());
+    public static boolean ruoloEsistente(String r){
+        r=r.toUpperCase();
+        for(Ruoli ruolo : values()){
+            if(ruolo.name().equals(r))
+                return true;
         }
+        return false;
+    }
+    
+    public static Ruoli fromString(String r){
+        r=r.toUpperCase();
+        for(Ruoli ruolo : values()){
+            if(ruolo.name().equals(r))
+                return ruolo;
+        }
+        return null;
     }
 }
