@@ -9,11 +9,11 @@ public class Astronave {
     private ArrayList<Membro> membri = new ArrayList<>();
     private Flotta flotta;
 
-    public Astronave(String nome) {
+    public Astronave(String nome, String nomeCapitano) {
         this.nome = nome;
         moduli.put(TipiModulo.PILOTAGGIO, new Modulo(100, TipiModulo.PILOTAGGIO));
         moduli.put(TipiModulo.ABITATIVO, new Modulo(100, TipiModulo.ABITATIVO));
-        membri.add(new Membro("Cap", Ruoli.CAPITANO));
+        membri.add(new Membro(nomeCapitano, Ruoli.CAPITANO));
     }
     
     public void setFlotta(Flotta flotta){
@@ -55,7 +55,7 @@ public class Astronave {
     }
 
     public void aggiungiMembro(Membro membro) {
-        if(membro.getRuolo() != Ruoli.CAPITANO)
+        if(membro.getRuolo() == Ruoli.CAPITANO)
             membro.togliRuolo();
         membri.add(membro);
         membro.setAstronave(this);

@@ -1,4 +1,6 @@
 
+import java.awt.*;
+import java.awt.event.ActionListener;
 import javax.swing.*;
 
 public class FlottaStellareUI extends javax.swing.JFrame {
@@ -12,6 +14,7 @@ public class FlottaStellareUI extends javax.swing.JFrame {
     DefaultListModel<String> listaNavi = new DefaultListModel<String>();
     DefaultListModel<String> listaMembri = new DefaultListModel<String>();
     DefaultListModel<String> listaModuli = new DefaultListModel<String>();
+    
     public FlottaStellareUI(){
         initComponents();
         this.setExtendedState(JFrame.MAXIMIZED_BOTH);
@@ -19,31 +22,52 @@ public class FlottaStellareUI extends javax.swing.JFrame {
     }
     
     public String creaFinestraDialogo(String contesto){
-        final String[] input={null};
-        JDialog dialog = new JDialog(this, contesto, true);
+        final String[] input = {null};
+
+        JDialog dialog = new JDialog(this, "Input", true);
+
         dialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
 
-        JPanel panel = new JPanel();
-        JTextField textField = new JTextField(20);
-        JButton okButton = new JButton("OK");
+        JPanel mainPanel = new JPanel(new BorderLayout(10, 10));
 
-        okButton.addActionListener(e -> {
-        if (!textField.getText().trim().isEmpty()) {
-            input[0] = textField.getText();
-            dialog.dispose();
-        } else {
-            JOptionPane.showMessageDialog(dialog, "Input required!");
-        }
+        mainPanel.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
+
+        JLabel questionLabel = new JLabel(contesto);
+
+        questionLabel.setFont(questionLabel.getFont().deriveFont(14f));
+
+        mainPanel.add(questionLabel, BorderLayout.NORTH);
+
+        JTextField textField = new JTextField(20);
+
+        mainPanel.add(textField, BorderLayout.CENTER);
+
+        ActionListener submitAction = e -> {
+            if (!textField.getText().trim().isEmpty()) {
+                input[0] = textField.getText();
+                dialog.dispose();
+            } else {
+                JOptionPane.showMessageDialog(dialog, "Input necessario!");
+            }
+        };
+
+        textField.addActionListener(submitAction);
+
+        dialog.add(mainPanel);
+
+        dialog.pack();
+
+        dialog.setLocationRelativeTo(this);
+
+        dialog.addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
+            public void windowOpened(java.awt.event.WindowEvent e) {
+                textField.requestFocusInWindow();
+            }
         });
 
-        panel.add(new JLabel("Enter text:"));
-        panel.add(textField);
-        panel.add(okButton);
-
-        dialog.add(panel);
-        dialog.pack();
-        dialog.setLocationRelativeTo(null);
         dialog.setVisible(true);
+
         return input[0];
     }
     
@@ -70,7 +94,32 @@ public class FlottaStellareUI extends javax.swing.JFrame {
         }
         return Ruoli.fromString(ruolo);
     }
+    public TipiModulo tipoModuloInput(String contesto){
+        String tipo="";
+        while(!TipiModulo.tipoEsistente(tipo)){
+            tipo = creaFinestraDialogo(contesto);
+        }
+        return TipiModulo.fromString(tipo);
+    }
     
+    public void aggiornaNavi(){
+        listaNavi.clear();
+        for(Astronave a : viaggio.getNavi()){
+            listaNavi.addElement(a.getNome());
+        }
+    }
+    public void aggiornaMembri(){
+        listaMembri.clear();
+        for(Membro m : viaggio.getMembri(lst_navi.getSelectedIndex())){
+            listaMembri.addElement(m.getNome());
+        }
+    }
+    public void aggiornaModuli(){
+        listaModuli.clear();
+        for(Modulo m : viaggio.getModuli(lst_navi.getSelectedIndex())){
+            listaModuli.addElement(m.getTipo().name());
+        }
+    }
     
     public void inizializzazione(){
         Flotta f = new Flotta(stringInput("Dimmi il nome della flotta"), intInput("Dimmi il numero di razioni per membro"));
@@ -112,14 +161,16 @@ public class FlottaStellareUI extends javax.swing.JFrame {
         lbl_salute = new javax.swing.JLabel();
         lbl_razioniRimaste = new javax.swing.JLabel();
         lbl_giorniRimasti = new javax.swing.JLabel();
-        btn_aggiungiNave1 = new javax.swing.JButton();
+        btn_aggiungiMembro = new javax.swing.JButton();
+        btn_aggiungiModulo = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         getContentPane().setLayout(null);
 
-        lst_navi.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
-            public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
-                lst_naviValueChanged(evt);
+        lst_navi.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
+        lst_navi.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lst_naviMouseClicked(evt);
             }
         });
         jScrollPane1.setViewportView(lst_navi);
@@ -137,9 +188,10 @@ public class FlottaStellareUI extends javax.swing.JFrame {
         getContentPane().add(btn_aggiungiNave);
         btn_aggiungiNave.setBounds(70, 550, 220, 40);
 
-        lst_moduli.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
-            public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
-                lst_moduliValueChanged(evt);
+        lst_moduli.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
+        lst_moduli.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lst_moduliMouseClicked(evt);
             }
         });
         jScrollPane2.setViewportView(lst_moduli);
@@ -147,9 +199,10 @@ public class FlottaStellareUI extends javax.swing.JFrame {
         getContentPane().add(jScrollPane2);
         jScrollPane2.setBounds(490, 350, 230, 190);
 
-        lst_membri.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
-            public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
-                lst_membriValueChanged(evt);
+        lst_membri.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
+        lst_membri.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lst_membriMouseClicked(evt);
             }
         });
         jScrollPane3.setViewportView(lst_membri);
@@ -200,56 +253,79 @@ public class FlottaStellareUI extends javax.swing.JFrame {
         getContentPane().add(lbl_giorniRimasti);
         lbl_giorniRimasti.setBounds(800, 20, 230, 25);
 
-        btn_aggiungiNave1.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
-        btn_aggiungiNave1.setText("Aggiungi un membro");
-        btn_aggiungiNave1.addMouseListener(new java.awt.event.MouseAdapter() {
+        btn_aggiungiMembro.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        btn_aggiungiMembro.setText("Aggiungi un membro");
+        btn_aggiungiMembro.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                btn_aggiungiNave1MouseClicked(evt);
+                btn_aggiungiMembroMouseClicked(evt);
             }
         });
-        getContentPane().add(btn_aggiungiNave1);
-        btn_aggiungiNave1.setBounds(70, 600, 220, 40);
+        getContentPane().add(btn_aggiungiMembro);
+        btn_aggiungiMembro.setBounds(70, 600, 220, 40);
+
+        btn_aggiungiModulo.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        btn_aggiungiModulo.setText("Aggiungi un modulo");
+        btn_aggiungiModulo.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btn_aggiungiModuloMouseClicked(evt);
+            }
+        });
+        getContentPane().add(btn_aggiungiModulo);
+        btn_aggiungiModulo.setBounds(70, 650, 220, 40);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
     private void btn_aggiungiNaveMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_aggiungiNaveMouseClicked
-        if(!viaggio.aggiungiNave(stringInput("Dimmi il nome della nave"))){
+        if(!viaggio.aggiungiNave(stringInput("Dimmi il nome della nave"), stringInput("Dimmi il nome del capitano"))){
             mostraMessaggio("Impossibile aggiungere una nave con tale nome");
             return;
         }
         mostraMessaggio("Nave aggiunta");
-        listaNavi.addElement(viaggio.getNavi().getLast().getNome());
+        aggiornaNavi();
         lbl_razioniRimaste.setText("razioni rimaste: "+ viaggio.getFlotta().getRazioni());
     }//GEN-LAST:event_btn_aggiungiNaveMouseClicked
 
-    private void lst_naviValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_lst_naviValueChanged
-        Astronave a = viaggio.getFlotta().getAstronaviIntatte().get(lst_navi.getSelectedIndex());
-        listaModuli.clear();
-        listaMembri.clear();
-        for(Modulo m : a.getModuliIntatti()){
-            listaModuli.addElement(m.getTipo().name());
+    private void btn_aggiungiMembroMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_aggiungiMembroMouseClicked
+        if(lst_navi.getSelectedIndex() != -1){
+            viaggio.aggiungiMembro(lst_navi.getSelectedIndex(), ruoloInput("Dimmi il ruolo del membro"), stringInput("Dimmi il nome del membro"));
+            aggiornaMembri();
         }
-        for(Membro m : a.getMembriVivi()){
-            listaMembri.addElement(m.getNome());
+    }//GEN-LAST:event_btn_aggiungiMembroMouseClicked
+
+    private void btn_aggiungiModuloMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_aggiungiModuloMouseClicked
+        if(lst_navi.getSelectedIndex() != -1){
+            viaggio.aggiungiModulo(lst_navi.getSelectedIndex(), intInput("Dimmi la salute del modulo"), tipoModuloInput("Dimmi il tipo di modulo"));
+            aggiornaModuli();
         }
-    }//GEN-LAST:event_lst_naviValueChanged
+    }//GEN-LAST:event_btn_aggiungiModuloMouseClicked
 
-    private void lst_membriValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_lst_membriValueChanged
-        lst_moduli.clearSelection();
-        lbl_salute.setText("salute:");
-        lbl_ruolo.setText("ruolo: " + viaggio.getFlotta().getAstronaviIntatte().get(lst_navi.getSelectedIndex()).getMembriVivi().get(lst_membri.getSelectedIndex()).getRuolo().name());
-    }//GEN-LAST:event_lst_membriValueChanged
+    private void lst_naviMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lst_naviMouseClicked
+        if(lst_navi.getSelectedIndex()!=-1){
+            aggiornaModuli();
+            aggiornaMembri();
+            lst_membri.clearSelection();
+            lst_moduli.clearSelection();
+            lbl_ruolo.setText("ruolo:");
+            lbl_salute.setText("salute:");
+        }
+    }//GEN-LAST:event_lst_naviMouseClicked
 
-    private void lst_moduliValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_lst_moduliValueChanged
-        lst_membri.clearSelection();
-        lbl_ruolo.setText("ruolo:");
-        lbl_salute.setText("salute: " + viaggio.getFlotta().getAstronaviIntatte().get(lst_navi.getSelectedIndex()).getModuliIntatti().get(lst_moduli.getSelectedIndex()).getSalute());
-    }//GEN-LAST:event_lst_moduliValueChanged
+    private void lst_moduliMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lst_moduliMouseClicked
+        if(lst_moduli.getSelectedIndex()!=-1){
+            lst_membri.clearSelection();
+            lbl_ruolo.setText("ruolo:");
+            lbl_salute.setText("salute: " + viaggio.getModuli(lst_navi.getSelectedIndex()).get(lst_moduli.getSelectedIndex()).getSalute());
+        }
+    }//GEN-LAST:event_lst_moduliMouseClicked
 
-    private void btn_aggiungiNave1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_aggiungiNave1MouseClicked
-        viaggio.aggiungiMembro(lst_navi.getSelectedIndex(), stringInput("Dimmi il ruolo del membro"), stringInput("Dimmi il nome del membro"));
-    }//GEN-LAST:event_btn_aggiungiNave1MouseClicked
+    private void lst_membriMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lst_membriMouseClicked
+        if(lst_membri.getSelectedIndex()!=-1){
+            lst_moduli.clearSelection();
+            lbl_salute.setText("salute:");
+            lbl_ruolo.setText("ruolo: " + viaggio.getFlotta().getAstronaviIntatte().get(lst_navi.getSelectedIndex()).getMembriVivi().get(lst_membri.getSelectedIndex()).getRuolo().name());lst_moduli.clearSelection();
+        }
+    }//GEN-LAST:event_lst_membriMouseClicked
 
     /**
      * @param args the command line arguments
@@ -277,8 +353,9 @@ public class FlottaStellareUI extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btn_aggiungiMembro;
+    private javax.swing.JButton btn_aggiungiModulo;
     private javax.swing.JButton btn_aggiungiNave;
-    private javax.swing.JButton btn_aggiungiNave1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;

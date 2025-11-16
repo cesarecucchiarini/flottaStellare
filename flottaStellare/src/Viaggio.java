@@ -28,7 +28,14 @@ public class Viaggio {
     public ArrayList<Astronave> getNavi(){
         return flotta.getAstronaviIntatte();
     }
-
+    
+    public ArrayList<Membro> getMembri(int index){
+        return flotta.getAstronaviIntatte().get(index).getMembriVivi();
+    }
+    public ArrayList<Modulo> getModuli(int index){
+        return flotta.getAstronaviIntatte().get(index).getModuliIntatti();
+    }
+    
     public void risolviEvento(Eventi e){
         switch (e) {
             case CAMPO_METEORICO:
@@ -85,30 +92,19 @@ public class Viaggio {
         scanner.close();
     }
 
-    public boolean aggiungiNave(String nomeNave){
+    public boolean aggiungiNave(String nomeNave, String nomeCapitano){
         if(flotta.getAstronaviIntatte().stream().anyMatch(n -> n.getNome().equals(nomeNave))){
             return false;
         }
-        flotta.aggiungiAstronave(new Astronave(nomeNave));
+        flotta.aggiungiAstronave(new Astronave(nomeNave, nomeCapitano));
         return true;
     }
 
-    public void aggiungiModulo(){
-        for(int i=0; i<flotta.getAstronaviIntatte().size(); i++){
-            System.out.println(i+" - "+flotta.getAstronaviIntatte().get(i).getNome());
-        }
-        System.out.println("Seleziona la nave (numero) a cui vuoi aggiungere un modulo:");
-        int naveIndex = scanner.nextInt();
-        TipiModulo.printTipi();
-        System.out.println("Seleziona la salute del modulo e il suo tipo (numero) da aggiungere:");
-        try{
-        flotta.getAstronaviIntatte().get(naveIndex).aggiungiModulo(new Modulo(scanner.nextInt(), TipiModulo.values()[scanner.nextInt()]));
-        } catch (ArrayIndexOutOfBoundsException e){
-            System.out.println("Inserimento non valido.");
-        }
+    public void aggiungiModulo(int index, int salute, TipiModulo tipo){
+        flotta.getAstronaviIntatte().get(index).aggiungiModulo(new Modulo(salute, tipo));
     }
 
-    private boolean aggiungiMembro(int index, Ruoli ruolo, String nomeMembro){
+    public boolean aggiungiMembro(int index, Ruoli ruolo, String nomeMembro){
         for(Membro m : flotta.getAstronaviIntatte().get(index).getMembriVivi()){
             if(m.getNome().equals(nomeMembro))
                 return false;
