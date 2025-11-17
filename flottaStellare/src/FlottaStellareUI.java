@@ -2,6 +2,7 @@
 import java.awt.*;
 import java.awt.event.ActionListener;
 import javax.swing.*;
+import java.util.ArrayList;
 
 public class FlottaStellareUI extends javax.swing.JFrame {
     
@@ -11,14 +12,16 @@ public class FlottaStellareUI extends javax.swing.JFrame {
      * Creates new form FlottaStellareUI
      */
     Viaggio viaggio;
-    DefaultListModel<String> listaNavi = new DefaultListModel<String>();
-    DefaultListModel<String> listaMembri = new DefaultListModel<String>();
-    DefaultListModel<String> listaModuli = new DefaultListModel<String>();
+    DefaultListModel<String> listaNavi = new DefaultListModel<>();
+    DefaultListModel<String> listaMembri = new DefaultListModel<>();
+    DefaultListModel<String> listaModuli = new DefaultListModel<>();
     
     public FlottaStellareUI(){
         initComponents();
         this.setExtendedState(JFrame.MAXIMIZED_BOTH);
         this.setVisible(true);
+        lbl_salute.setText("");
+        lbl_ruolo.setText("");
     }
     
     public String creaFinestraDialogo(String contesto){
@@ -50,6 +53,14 @@ public class FlottaStellareUI extends javax.swing.JFrame {
                 JOptionPane.showMessageDialog(dialog, "Input necessario!");
             }
         };
+        
+        JButton okButton = new JButton("OK");
+        okButton.setPreferredSize(new Dimension(60, 30)); 
+        okButton.addActionListener(submitAction);
+        
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        buttonPanel.add(okButton);
+        mainPanel.add(buttonPanel, BorderLayout.SOUTH);
 
         textField.addActionListener(submitAction);
 
@@ -71,6 +82,112 @@ public class FlottaStellareUI extends javax.swing.JFrame {
         return input[0];
     }
     
+    public <T> T creaFinestraScelta(String contesto, ArrayList<T> opzioni){
+    final Object[] input = {null};
+    JDialog dialog = new JDialog(this, "Input", true);
+    dialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
+    JPanel mainPanel = new JPanel(new BorderLayout(10, 10));
+    mainPanel.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
+    
+    JLabel questionLabel = new JLabel(contesto);
+    questionLabel.setFont(questionLabel.getFont().deriveFont(14f));
+    mainPanel.add(questionLabel, BorderLayout.NORTH);
+    
+    // Create combo box with ArrayList values
+    JComboBox<T> comboBox = new JComboBox<>(opzioni.toArray((T[]) new Object[0]));
+    mainPanel.add(comboBox, BorderLayout.CENTER);
+    
+    ActionListener submitAction = e -> {
+        input[0] = comboBox.getSelectedItem();
+        dialog.dispose();
+    };
+    
+    // Create OK button
+    JButton okButton = new JButton("OK");
+    okButton.setPreferredSize(new Dimension(60, 30));
+    okButton.addActionListener(submitAction);
+    
+    // Create button panel
+    JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+    buttonPanel.add(okButton);
+    mainPanel.add(buttonPanel, BorderLayout.SOUTH);
+    
+    dialog.add(mainPanel);
+    dialog.pack();
+    dialog.setLocationRelativeTo(this);
+    dialog.addWindowListener(new java.awt.event.WindowAdapter() {
+        @Override
+        public void windowOpened(java.awt.event.WindowEvent e) {
+            comboBox.requestFocusInWindow();
+        }
+    });
+    dialog.setVisible(true);
+    return (T) input[0];
+}
+    
+    public <T> ArrayList<T> creaFinestraSceltaMultipla(String contesto, ArrayList<T> opzioni){
+    final ArrayList<T> selectedItems = new ArrayList<>();
+    JDialog dialog = new JDialog(this, "Selezione Multipla", true);
+    dialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
+    JPanel mainPanel = new JPanel(new BorderLayout(10, 10));
+    mainPanel.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
+    
+    JLabel questionLabel = new JLabel(contesto);
+    questionLabel.setFont(questionLabel.getFont().deriveFont(14f));
+    mainPanel.add(questionLabel, BorderLayout.NORTH);
+    
+    // Create panel for checkboxes
+    JPanel checkBoxPanel = new JPanel();
+    checkBoxPanel.setLayout(new BoxLayout(checkBoxPanel, BoxLayout.Y_AXIS));
+    
+    // Create a checkbox for each option
+    ArrayList<JCheckBox> checkBoxes = new ArrayList<>();
+    for (T opzione : opzioni) {
+        JCheckBox checkBox = new JCheckBox(opzione.toString());
+        checkBox.setFocusPainted(false); // Remove focus outline
+        checkBoxes.add(checkBox);
+        checkBoxPanel.add(checkBox);
+    }
+    
+    // Calculate height based on number of checkboxes (max 10)
+    int numCheckboxes = Math.min(opzioni.size(), 10);
+    int checkboxHeight = 25; // Approximate height per checkbox
+    int scrollPaneHeight = numCheckboxes * checkboxHeight;
+    
+    // Add scroll pane only if needed
+    JScrollPane scrollPane = new JScrollPane(checkBoxPanel);
+    scrollPane.setPreferredSize(new Dimension(300, scrollPaneHeight));
+    scrollPane.setBorder(null); // Remove scroll pane border
+    mainPanel.add(scrollPane, BorderLayout.CENTER);
+    
+    ActionListener submitAction = e -> {
+        selectedItems.clear();
+        for (int i = 0; i < checkBoxes.size(); i++) {
+            if (checkBoxes.get(i).isSelected()) {
+                selectedItems.add(opzioni.get(i));
+            }
+        }
+        dialog.dispose();
+    };
+    
+    // Create OK button
+    JButton okButton = new JButton("OK");
+    okButton.setPreferredSize(new Dimension(60, 30));
+    okButton.addActionListener(submitAction);
+    
+    // Create button panel
+    JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+    buttonPanel.add(okButton);
+    mainPanel.add(buttonPanel, BorderLayout.SOUTH);
+    
+    dialog.add(mainPanel);
+    dialog.pack();
+    dialog.setLocationRelativeTo(this);
+    dialog.setVisible(true);
+    
+    return selectedItems;
+}
+    
     public String stringInput(String contesto){
         String input="";
         while(input.trim().length()==0){
@@ -88,18 +205,10 @@ public class FlottaStellareUI extends javax.swing.JFrame {
         return input;
     }
     public Ruoli ruoloInput(String contesto){
-        String ruolo="";
-        while(!Ruoli.ruoloEsistente(ruolo)){
-            ruolo = creaFinestraDialogo(contesto);
-        }
-        return Ruoli.fromString(ruolo);
+        return creaFinestraScelta(contesto, Ruoli.getRuoli());
     }
-    public TipiModulo tipoModuloInput(String contesto){
-        String tipo="";
-        while(!TipiModulo.tipoEsistente(tipo)){
-            tipo = creaFinestraDialogo(contesto);
-        }
-        return TipiModulo.fromString(tipo);
+    public ArrayList<TipiModulo> tipiModuloInput(String contesto){
+        return creaFinestraSceltaMultipla(contesto, TipiModulo.getTipiModulo());
     }
     
     public void aggiornaNavi(){
@@ -254,7 +363,7 @@ public class FlottaStellareUI extends javax.swing.JFrame {
         lbl_giorniRimasti.setBounds(800, 20, 230, 25);
 
         btn_aggiungiMembro.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
-        btn_aggiungiMembro.setText("Aggiungi un membro");
+        btn_aggiungiMembro.setText("Aggiungi membri");
         btn_aggiungiMembro.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 btn_aggiungiMembroMouseClicked(evt);
@@ -264,7 +373,7 @@ public class FlottaStellareUI extends javax.swing.JFrame {
         btn_aggiungiMembro.setBounds(70, 600, 220, 40);
 
         btn_aggiungiModulo.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
-        btn_aggiungiModulo.setText("Aggiungi un modulo");
+        btn_aggiungiModulo.setText("Aggiungi moduli");
         btn_aggiungiModulo.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 btn_aggiungiModuloMouseClicked(evt);
@@ -277,7 +386,7 @@ public class FlottaStellareUI extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btn_aggiungiNaveMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_aggiungiNaveMouseClicked
-        if(!viaggio.aggiungiNave(stringInput("Dimmi il nome della nave"), stringInput("Dimmi il nome del capitano"))){
+        if(!viaggio.aggiungiNave(stringInput("Dimmi il nome della nave"))){
             mostraMessaggio("Impossibile aggiungere una nave con tale nome");
             return;
         }
@@ -287,17 +396,25 @@ public class FlottaStellareUI extends javax.swing.JFrame {
     }//GEN-LAST:event_btn_aggiungiNaveMouseClicked
 
     private void btn_aggiungiMembroMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_aggiungiMembroMouseClicked
-        if(lst_navi.getSelectedIndex() != -1){
-            viaggio.aggiungiMembro(lst_navi.getSelectedIndex(), ruoloInput("Dimmi il ruolo del membro"), stringInput("Dimmi il nome del membro"));
-            aggiornaMembri();
+        if(lst_navi.getSelectedIndex() == -1){ 
+            mostraMessaggio("Impossibile aggiungere il membro");
+            return;
         }
+        viaggio.aggiungiMembri(viaggio.getNavi().get(lst_navi.getSelectedIndex()),intInput("Dimmi il numero dei membri da aggiungere"), ruoloInput("Dimmi il ruolo dei membri da aggiungere"));
+        aggiornaMembri();
+        lbl_razioniRimaste.setText("razioni: "+viaggio.getFlotta().getRazioni());
+        mostraMessaggio("Membri aggiunti");
     }//GEN-LAST:event_btn_aggiungiMembroMouseClicked
 
     private void btn_aggiungiModuloMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_aggiungiModuloMouseClicked
-        if(lst_navi.getSelectedIndex() != -1){
-            viaggio.aggiungiModulo(lst_navi.getSelectedIndex(), intInput("Dimmi la salute del modulo"), tipoModuloInput("Dimmi il tipo di modulo"));
-            aggiornaModuli();
+        if(lst_navi.getSelectedIndex() == -1){
+            mostraMessaggio("Impossibile aggiungere il modulo");
+            return;
         }
+        //da modificare
+        viaggio.aggiungiModulo(viaggio.getNavi().get(lst_navi.getSelectedIndex()), intInput("Dimmi la salute dei moduli"), tipiModuloInput("Dimmi il tipo dei moduli"));
+        aggiornaModuli();
+        mostraMessaggio("Moduli aggiunti");
     }//GEN-LAST:event_btn_aggiungiModuloMouseClicked
 
     private void lst_naviMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lst_naviMouseClicked
@@ -306,15 +423,15 @@ public class FlottaStellareUI extends javax.swing.JFrame {
             aggiornaMembri();
             lst_membri.clearSelection();
             lst_moduli.clearSelection();
-            lbl_ruolo.setText("ruolo:");
-            lbl_salute.setText("salute:");
+            lbl_ruolo.setText("");
+            lbl_salute.setText("");
         }
     }//GEN-LAST:event_lst_naviMouseClicked
 
     private void lst_moduliMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lst_moduliMouseClicked
         if(lst_moduli.getSelectedIndex()!=-1){
             lst_membri.clearSelection();
-            lbl_ruolo.setText("ruolo:");
+            lbl_ruolo.setText("");
             lbl_salute.setText("salute: " + viaggio.getModuli(lst_navi.getSelectedIndex()).get(lst_moduli.getSelectedIndex()).getSalute());
         }
     }//GEN-LAST:event_lst_moduliMouseClicked
@@ -322,7 +439,7 @@ public class FlottaStellareUI extends javax.swing.JFrame {
     private void lst_membriMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lst_membriMouseClicked
         if(lst_membri.getSelectedIndex()!=-1){
             lst_moduli.clearSelection();
-            lbl_salute.setText("salute:");
+            lbl_salute.setText("");
             lbl_ruolo.setText("ruolo: " + viaggio.getFlotta().getAstronaviIntatte().get(lst_navi.getSelectedIndex()).getMembriVivi().get(lst_membri.getSelectedIndex()).getRuolo().name());lst_moduli.clearSelection();
         }
     }//GEN-LAST:event_lst_membriMouseClicked

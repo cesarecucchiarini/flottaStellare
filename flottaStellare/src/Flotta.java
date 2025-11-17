@@ -28,6 +28,10 @@ public class Flotta {
         razioni+=razioniNave*nave.getMembriVivi().size();
     }
     
+    public void setRazioni(int membri){
+        razioni+=razioniNave*membri;
+    }
+    
     public void pasto(){
         for(Astronave astronave : this.getAstronaviIntatte()){
             for(Membro membro : astronave.getMembriVivi()){
@@ -37,7 +41,6 @@ public class Flotta {
                     membro.morte();
             }
         }
-        System.out.println("Il pasto si è concluso, razioni rimaste nella flotta: "+ razioni);
     }
     
     public ArrayList<Astronave> getAstronaviIntatte(){
@@ -76,14 +79,13 @@ public class Flotta {
                 tempoAggiunto+=modulo.ripara();
             }
         }
-        System.out.println("La scansione e' terminata, tempo di riparazione ridotto di: " + (int)tempoAggiunto/(ingegneri+1) + " turni.");
         return (int)tempoAggiunto/(ingegneri+1);
     }
 
     public ArrayList<Membro> getMembriTipo(Ruoli ruolo){
         ArrayList<Membro> membri = new ArrayList<>();
         for(Astronave astronave : this.getAstronaviIntatte()){
-            membri.addAll(astronave.getMembri().stream().filter(m -> m.getRuolo() == ruolo).collect(Collectors.toCollection(ArrayList::new)));
+            membri.addAll(astronave.getMembriVivi().stream().filter(m -> m.getRuolo() == ruolo).collect(Collectors.toCollection(ArrayList::new)));
         }
         return membri;
     }

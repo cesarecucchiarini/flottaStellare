@@ -9,15 +9,14 @@ public class Astronave {
     private ArrayList<Membro> membri = new ArrayList<>();
     private Flotta flotta;
 
-    public Astronave(String nome, String nomeCapitano) {
+    public Astronave(String nome) {
         this.nome = nome;
         moduli.put(TipiModulo.PILOTAGGIO, new Modulo(100, TipiModulo.PILOTAGGIO));
         moduli.put(TipiModulo.ABITATIVO, new Modulo(100, TipiModulo.ABITATIVO));
-        membri.add(new Membro(nomeCapitano, Ruoli.CAPITANO));
+        membri.add(new Membro(nome+" #"+0, Ruoli.CAPITANO));
     }
     
     public void setFlotta(Flotta flotta){
-        System.out.println(this + " e' stata aggiunta alla flotta " + flotta.getNome());
         this.flotta = flotta;
     }
     
@@ -41,17 +40,12 @@ public class Astronave {
             for(Modulo modulo : moduli.values()) {
                 modulo.distruggi();
             }
-            System.out.println(this + " e' stata distrutta!");
             this.stato = false;
         }
     }
 
     public ArrayList<Modulo> getModuli() {
         return new ArrayList<Modulo>(moduli.values());
-    }
-
-    public ArrayList<Membro> getMembri() {
-        return membri;
     }
 
     public void aggiungiMembro(Membro membro) {
@@ -94,10 +88,5 @@ public class Astronave {
     
     public void rimuoviMembro(Membro membro){
         this.membri.remove(membro);
-    }
-
-    @Override
-    public String toString() {
-        return "Astronave chiamata " + nome + " della flotta " + (flotta != null ? "\'" + flotta.getNome() + "\'" : "nessuna");
     }
 }

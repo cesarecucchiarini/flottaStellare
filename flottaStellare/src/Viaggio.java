@@ -77,39 +77,49 @@ public class Viaggio {
         aumentaGiorni(giorniAggiunti);
         flotta.danniStrutturali(danniSubiti);
         flotta.morteMembri(morti);
-        System.out.println("Ci sono stati " + giorniAggiunti + " giorni aggiuntivi, " + danniSubiti + " danni subiti e " + morti + " morti.");
     }
 
     public void viaggio(){
-        System.out.println("Inizio viaggio");
         for(giorno=0;giorno<giorniViaggio;giorno++){
-            System.out.println("Giorno "+(giorno+1));
             evento();
             flotta.scansionaModuli();
             flotta.pasto();
         }
-        System.out.println("Fine del viaggio");
         scanner.close();
     }
 
-    public boolean aggiungiNave(String nomeNave, String nomeCapitano){
+    public boolean aggiungiNave(String nomeNave){
         if(flotta.getAstronaviIntatte().stream().anyMatch(n -> n.getNome().equals(nomeNave))){
             return false;
         }
-        flotta.aggiungiAstronave(new Astronave(nomeNave, nomeCapitano));
+        flotta.aggiungiAstronave(new Astronave(nomeNave));
         return true;
     }
 
-    public void aggiungiModulo(int index, int salute, TipiModulo tipo){
-        flotta.getAstronaviIntatte().get(index).aggiungiModulo(new Modulo(salute, tipo));
-    }
-
-    public boolean aggiungiMembro(int index, Ruoli ruolo, String nomeMembro){
-        for(Membro m : flotta.getAstronaviIntatte().get(index).getMembriVivi()){
-            if(m.getNome().equals(nomeMembro))
-                return false;
+    public void aggiungiModulo(Astronave a, int salute, ArrayList<TipiModulo> tipi){
+        for(TipiModulo t : tipi){
+            a.aggiungiModulo(new Modulo(salute, t));
         }
-        flotta.getAstronaviIntatte().get(index).aggiungiMembro(new Membro(nomeMembro, ruolo));
-        return true;
+    }
+    
+    public void aggiungiMembri(Astronave a, int numero, Ruoli ruolo){
+        boolean salto;
+        int scarto=0;
+        for(int i=0; i<numero; i++){
+            String nome = a.getNome()+" #"+(i+scarto);
+            salto=false;
+            for(Membro m : a.getMembriVivi()){
+                if(m.getNome().equals(nome))
+                    salto=true;
+            }
+            if(salto){
+                i--;
+                scarto++;
+            }   
+            else{
+                a.aggiungiMembro(new Membro(nome, ruolo));
+            }
+        }   
+        flotta.setRazioni(numero);
     }
 }

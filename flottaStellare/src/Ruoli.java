@@ -1,5 +1,6 @@
 
 import java.util.Random;
+import java.util.*;
 
 public enum Ruoli {
     CAPITANO,
@@ -11,22 +12,8 @@ public enum Ruoli {
     public static Ruoli getRuolo(){
         return values()[new Random().nextInt(values().length-1)+1];
     }
-
-    public static boolean ruoloEsistente(String r){
-        r=r.toUpperCase();
-        for(Ruoli ruolo : values()){
-            if(ruolo.name().equals(r))
-                return true;
-        }
-        return false;
-    }
     
-    public static Ruoli fromString(String r){
-        r=r.toUpperCase();
-        for(Ruoli ruolo : values()){
-            if(ruolo.name().equals(r))
-                return ruolo;
-        }
-        return null;
+    public static ArrayList<Ruoli> getRuoli(){
+        return new ArrayList<>(Arrays.asList(values()));
     }
 }

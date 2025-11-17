@@ -1,3 +1,6 @@
+import java.util.ArrayList;
+import java.util.Arrays;
+
 public enum TipiModulo {
     PILOTAGGIO,
     COMBATTIVO,
@@ -13,13 +16,8 @@ public enum TipiModulo {
        }
        return false;
    }
-   
-   public static TipiModulo fromString(String t){
-       t=t.toUpperCase();
-       for(TipiModulo tipo : values()){
-           if(tipo.name().equals(t))
-               return tipo;
-       }
-       return null;
-   }
+    
+   public static ArrayList<TipiModulo> getTipiModulo(){
+        return new ArrayList<>(Arrays.asList(values()));
+    }
 }
