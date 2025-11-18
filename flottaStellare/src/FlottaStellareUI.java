@@ -20,8 +20,11 @@ public class FlottaStellareUI extends javax.swing.JFrame {
         initComponents();
         this.setExtendedState(JFrame.MAXIMIZED_BOTH);
         this.setVisible(true);
-        lbl_salute.setText("");
-        lbl_ruolo.setText("");
+        lbl_info.setText("");
+        jPanel1.setVisible(false);
+        tArea_storia.setBorder(null);
+        tArea_storia.setLineWrap(true);
+        tArea_storia.setWrapStyleWord(true);
     }
     
     public String creaFinestraDialogo(String contesto){
@@ -245,7 +248,21 @@ public class FlottaStellareUI extends javax.swing.JFrame {
     public void mostraMessaggio(String m){
         JOptionPane.showMessageDialog(this, m, "Dialog Title", JOptionPane.INFORMATION_MESSAGE);
     }
-    
+    public void scriviMessaggio(String m){
+        new Thread(() -> {
+        for(char c : m.toCharArray()){
+            SwingUtilities.invokeLater(() -> {
+                tArea_storia.append(String.valueOf(c));
+            });
+            try {
+                Thread.sleep(50); // 50ms delay
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+                break;
+            }
+        }
+    }).start();
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -266,12 +283,15 @@ public class FlottaStellareUI extends javax.swing.JFrame {
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
-        lbl_ruolo = new javax.swing.JLabel();
-        lbl_salute = new javax.swing.JLabel();
+        lbl_info = new javax.swing.JLabel();
         lbl_razioniRimaste = new javax.swing.JLabel();
         lbl_giorniRimasti = new javax.swing.JLabel();
         btn_aggiungiMembro = new javax.swing.JButton();
         btn_aggiungiModulo = new javax.swing.JButton();
+        jPanel1 = new javax.swing.JPanel();
+        jScrollPane5 = new javax.swing.JScrollPane();
+        tArea_storia = new javax.swing.JTextArea();
+        btn_iniziaViaggio = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         getContentPane().setLayout(null);
@@ -328,7 +348,7 @@ public class FlottaStellareUI extends javax.swing.JFrame {
         jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel2.setText("moduli");
         getContentPane().add(jLabel2);
-        jLabel2.setBounds(570, 320, 70, 20);
+        jLabel2.setBounds(570, 550, 70, 20);
 
         jLabel3.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -342,15 +362,10 @@ public class FlottaStellareUI extends javax.swing.JFrame {
         getContentPane().add(jLabel5);
         jLabel5.setBounds(570, 80, 70, 20);
 
-        lbl_ruolo.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
-        lbl_ruolo.setText("ruolo:");
-        getContentPane().add(lbl_ruolo);
-        lbl_ruolo.setBounds(730, 200, 160, 20);
-
-        lbl_salute.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
-        lbl_salute.setText("salute:");
-        getContentPane().add(lbl_salute);
-        lbl_salute.setBounds(730, 430, 160, 20);
+        lbl_info.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        lbl_info.setText("salute:");
+        getContentPane().add(lbl_info);
+        lbl_info.setBounds(500, 320, 160, 20);
 
         lbl_razioniRimaste.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         lbl_razioniRimaste.setText("razioni rimaste:");
@@ -381,6 +396,37 @@ public class FlottaStellareUI extends javax.swing.JFrame {
         });
         getContentPane().add(btn_aggiungiModulo);
         btn_aggiungiModulo.setBounds(70, 650, 220, 40);
+
+        jPanel1.setBackground(new java.awt.Color(0, 0, 0));
+        jPanel1.setDoubleBuffered(false);
+        jPanel1.setLayout(null);
+
+        jScrollPane5.setBorder(null);
+
+        tArea_storia.setBackground(new java.awt.Color(0, 0, 0));
+        tArea_storia.setColumns(20);
+        tArea_storia.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        tArea_storia.setForeground(new java.awt.Color(255, 255, 255));
+        tArea_storia.setRows(5);
+        tArea_storia.setText("eventi");
+        tArea_storia.setBorder(null);
+        jScrollPane5.setViewportView(tArea_storia);
+
+        jPanel1.add(jScrollPane5);
+        jScrollPane5.setBounds(10, 10, 440, 330);
+
+        getContentPane().add(jPanel1);
+        jPanel1.setBounds(800, 110, 460, 430);
+
+        btn_iniziaViaggio.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        btn_iniziaViaggio.setText("Iniza il viaggio");
+        btn_iniziaViaggio.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btn_iniziaViaggioMouseClicked(evt);
+            }
+        });
+        getContentPane().add(btn_iniziaViaggio);
+        btn_iniziaViaggio.setBounds(70, 700, 220, 40);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -423,26 +469,37 @@ public class FlottaStellareUI extends javax.swing.JFrame {
             aggiornaMembri();
             lst_membri.clearSelection();
             lst_moduli.clearSelection();
-            lbl_ruolo.setText("");
-            lbl_salute.setText("");
+            lbl_info.setText("");
         }
     }//GEN-LAST:event_lst_naviMouseClicked
 
     private void lst_moduliMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lst_moduliMouseClicked
         if(lst_moduli.getSelectedIndex()!=-1){
             lst_membri.clearSelection();
-            lbl_ruolo.setText("");
-            lbl_salute.setText("salute: " + viaggio.getModuli(lst_navi.getSelectedIndex()).get(lst_moduli.getSelectedIndex()).getSalute());
+            lbl_info.setText("salute: " + viaggio.getModuli(lst_navi.getSelectedIndex()).get(lst_moduli.getSelectedIndex()).getSalute());
         }
     }//GEN-LAST:event_lst_moduliMouseClicked
 
     private void lst_membriMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lst_membriMouseClicked
         if(lst_membri.getSelectedIndex()!=-1){
             lst_moduli.clearSelection();
-            lbl_salute.setText("");
-            lbl_ruolo.setText("ruolo: " + viaggio.getFlotta().getAstronaviIntatte().get(lst_navi.getSelectedIndex()).getMembriVivi().get(lst_membri.getSelectedIndex()).getRuolo().name());lst_moduli.clearSelection();
+            lbl_info.setText("ruolo: " + viaggio.getFlotta().getAstronaviIntatte().get(lst_navi.getSelectedIndex()).getMembriVivi().get(lst_membri.getSelectedIndex()).getRuolo().name());lst_moduli.clearSelection();
         }
     }//GEN-LAST:event_lst_membriMouseClicked
+
+    private void btn_iniziaViaggioMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_iniziaViaggioMouseClicked
+        jPanel1.setVisible(true);
+        btn_aggiungiMembro.setVisible(false);
+        btn_aggiungiModulo.setVisible(false);
+        btn_aggiungiNave.setVisible(false);
+        btn_aggiungiMembro.setEnabled(false);
+        btn_aggiungiModulo.setEnabled(false);
+        btn_aggiungiNave.setEnabled(false);
+        btn_iniziaViaggio.setEnabled(false);
+        btn_iniziaViaggio.setVisible(false);
+        
+        scriviMessaggio("Ciao mi chiamo Cesare e mi sto impazzendo per sto progetto quindi spero mi riesca");
+    }//GEN-LAST:event_btn_iniziaViaggioMouseClicked
 
     /**
      * @param args the command line arguments
@@ -473,19 +530,22 @@ public class FlottaStellareUI extends javax.swing.JFrame {
     private javax.swing.JButton btn_aggiungiMembro;
     private javax.swing.JButton btn_aggiungiModulo;
     private javax.swing.JButton btn_aggiungiNave;
+    private javax.swing.JButton btn_iniziaViaggio;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel5;
+    private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JScrollPane jScrollPane5;
     private javax.swing.JLabel lbl_giorniRimasti;
+    private javax.swing.JLabel lbl_info;
     private javax.swing.JLabel lbl_razioniRimaste;
-    private javax.swing.JLabel lbl_ruolo;
-    private javax.swing.JLabel lbl_salute;
     private javax.swing.JList<String> lst_membri;
     private javax.swing.JList<String> lst_moduli;
     private javax.swing.JList<String> lst_navi;
+    private javax.swing.JTextArea tArea_storia;
     // End of variables declaration//GEN-END:variables
 }

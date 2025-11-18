@@ -24,8 +24,10 @@ public class Modulo {
     }
 
     public void distruggi(){
-        this.stato=false;
-        astronave.distruggiNave();
+        if(this.stato){
+            this.stato=false;
+            astronave.distruggiNave();
+        }
     }
 
     public int getSalute() {
