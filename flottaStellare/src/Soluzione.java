@@ -7,8 +7,8 @@ public class Soluzione {
     private static int danniSubiti;
     private static Random rnd = new Random();
     
-    public static void fuga(int capitani){
-        giorniAggiunti = (int) Math.floor(rnd.nextInt(10)/(capitani+1));
+    public static void fuga(){
+        giorniAggiunti = rnd.nextInt(10);
     }
     
     public static void battaglia(int soldati, int moduli){
@@ -20,6 +20,10 @@ public class Soluzione {
     public static void controlloMembri(int scienziati, int moduli){
         giorniAggiunti = (int) Math.floor((rnd.nextInt(10)+2)/(scienziati+moduli+1));
         morti = rnd.nextInt(6)-moduli;
+    }
+    
+    public static void esca(){
+        morti = 1+rnd.nextInt(5);
     }
     
     public static void viaggioMeteorico(int capitani){

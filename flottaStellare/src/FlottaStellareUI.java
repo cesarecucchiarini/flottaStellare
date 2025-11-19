@@ -25,6 +25,7 @@ public class FlottaStellareUI extends javax.swing.JFrame {
         tArea_storia.setBorder(null);
         tArea_storia.setLineWrap(true);
         tArea_storia.setWrapStyleWord(true);
+        tArea_storia.setEditable(false);
     }
     
     public String creaFinestraDialogo(String contesto){
@@ -191,6 +192,46 @@ public class FlottaStellareUI extends javax.swing.JFrame {
     return selectedItems;
 }
     
+    public boolean creaFinestraYN(String contesto, String bottone1, String bottone2){
+       final boolean[] scelta = {false};
+    
+        JDialog dialog = new JDialog(this, "Scelta", true);
+        dialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
+
+        JPanel mainPanel = new JPanel(new BorderLayout(10, 10));
+        mainPanel.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
+
+        JLabel messageLabel = new JLabel(contesto);
+        messageLabel.setFont(messageLabel.getFont().deriveFont(14f));
+        mainPanel.add(messageLabel, BorderLayout.CENTER);
+
+        JButton button1 = new JButton(bottone1);
+        button1.setPreferredSize(new Dimension(100, 30));
+        button1.addActionListener(e -> {
+            scelta[0] = true;
+            dialog.dispose();
+        });
+
+        JButton button2 = new JButton(bottone2);
+        button2.setPreferredSize(new Dimension(100, 30));
+        button2.addActionListener(e -> {
+            scelta[0] = false;
+            dialog.dispose();
+        });
+
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 0));
+        buttonPanel.add(button1);
+        buttonPanel.add(button2);
+        mainPanel.add(buttonPanel, BorderLayout.SOUTH);
+
+        dialog.add(mainPanel);
+        dialog.pack();
+        dialog.setLocationRelativeTo(this);
+        dialog.setVisible(true);
+
+        return scelta[0]; 
+    }
+    
     public String stringInput(String contesto){
         String input="";
         while(input.trim().length()==0){
@@ -250,18 +291,19 @@ public class FlottaStellareUI extends javax.swing.JFrame {
     }
     public void scriviMessaggio(String m){
         new Thread(() -> {
-        for(char c : m.toCharArray()){
-            SwingUtilities.invokeLater(() -> {
-                tArea_storia.append(String.valueOf(c));
-            });
-            try {
-                Thread.sleep(50); // 50ms delay
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-                break;
+            tArea_storia.setText("");
+            for(char c : m.toCharArray()){
+                SwingUtilities.invokeLater(() -> {
+                    tArea_storia.append(String.valueOf(c));
+                });
+                try {
+                    Thread.sleep(50); // 50ms delay
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                    break;
+                }
             }
-        }
-    }).start();
+        }).start();
     }
     /**
      * This method is called from within the constructor to initialize the form.
@@ -291,7 +333,9 @@ public class FlottaStellareUI extends javax.swing.JFrame {
         jPanel1 = new javax.swing.JPanel();
         jScrollPane5 = new javax.swing.JScrollPane();
         tArea_storia = new javax.swing.JTextArea();
+        btn_avanti = new javax.swing.JButton();
         btn_iniziaViaggio = new javax.swing.JButton();
+        jButton1 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         getContentPane().setLayout(null);
@@ -415,6 +459,19 @@ public class FlottaStellareUI extends javax.swing.JFrame {
         jPanel1.add(jScrollPane5);
         jScrollPane5.setBounds(10, 10, 440, 330);
 
+        btn_avanti.setBackground(new java.awt.Color(0, 0, 0));
+        btn_avanti.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        btn_avanti.setForeground(new java.awt.Color(242, 242, 242));
+        btn_avanti.setText("avanti");
+        btn_avanti.setBorder(null);
+        btn_avanti.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btn_avantiMouseClicked(evt);
+            }
+        });
+        jPanel1.add(btn_avanti);
+        btn_avanti.setBounds(165, 360, 130, 40);
+
         getContentPane().add(jPanel1);
         jPanel1.setBounds(800, 110, 460, 430);
 
@@ -427,6 +484,14 @@ public class FlottaStellareUI extends javax.swing.JFrame {
         });
         getContentPane().add(btn_iniziaViaggio);
         btn_iniziaViaggio.setBounds(70, 700, 220, 40);
+
+        jButton1.setBackground(new java.awt.Color(0, 0, 0));
+        jButton1.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        jButton1.setForeground(new java.awt.Color(242, 242, 242));
+        jButton1.setText("avanti");
+        jButton1.setBorder(null);
+        getContentPane().add(jButton1);
+        jButton1.setBounds(880, 590, 130, 40);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -498,8 +563,27 @@ public class FlottaStellareUI extends javax.swing.JFrame {
         btn_iniziaViaggio.setEnabled(false);
         btn_iniziaViaggio.setVisible(false);
         
-        scriviMessaggio("Ciao mi chiamo Cesare e mi sto impazzendo per sto progetto quindi spero mi riesca");
+        scriviMessaggio("Pietro Ciacci gay, Leone Ciacci full trombato, Francesco Ciacci il goat, Paola Paoloni big boss");
     }//GEN-LAST:event_btn_iniziaViaggioMouseClicked
+
+    //controllare
+    private void btn_avantiMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_avantiMouseClicked
+        viaggio.getEvento();
+        if(!viaggio.controllaFine()){
+            scriviMessaggio("La fine del viaggio è arrivata");
+            return;
+        }
+        lbl_giorniRimasti.setText("giorni rimasti: "+viaggio.getGiorniRimasti());
+        int[] ris = viaggio.risolviEvento(creaFinestraYN(viaggio.descriviEvento(), viaggio.getBottoni()[0], viaggio.getBottoni()[1]));
+        scriviMessaggio("I giorni aggiunti sono stati: "+ris[0]+"\nImorti sono stati: "+ris[1]+"\nI danni subiti sono stati: "+ris[2]);
+        viaggio.subisciEffetti(ris);
+        if(!viaggio.controllaFine()){
+            scriviMessaggio("La fine del viaggio è arrivata");
+            return;
+        }
+        scriviMessaggio("I giorni che ci sono voluti per le riparazioni sono: "+viaggio.getFlotta().scansionaModuli());
+        lbl_giorniRimasti.setText("giorni rimasti: "+viaggio.getGiorniRimasti());
+    }//GEN-LAST:event_btn_avantiMouseClicked
 
     /**
      * @param args the command line arguments
@@ -530,7 +614,9 @@ public class FlottaStellareUI extends javax.swing.JFrame {
     private javax.swing.JButton btn_aggiungiMembro;
     private javax.swing.JButton btn_aggiungiModulo;
     private javax.swing.JButton btn_aggiungiNave;
+    private javax.swing.JButton btn_avanti;
     private javax.swing.JButton btn_iniziaViaggio;
+    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;

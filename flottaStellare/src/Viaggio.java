@@ -7,6 +7,7 @@ public class Viaggio {
     private int giorno;
     private Flotta flotta;
     private Scanner scanner = new Scanner(System.in);
+    private Eventi eventoAttuale;
 
     public Viaggio(int giorniViaggio, Flotta flotta) {
         this.giorniViaggio = giorniViaggio;
@@ -36,56 +37,113 @@ public class Viaggio {
         return flotta.getAstronaviIntatte().get(index).getModuliIntatti();
     }
     
-    public void risolviEvento(Eventi e){
-        switch (e) {
-            case CAMPO_METEORICO:
-                System.out.println("Evento: Campo Meteorico\n"+"Vuoi girarci attorno (s) o attraversarlo (a)?");
-                if(scanner.next().equals("s"))
-                    Soluzione.viaggioNonMeteorico();
-                else
-                    Soluzione.viaggioMeteorico(flotta.getMembriTipo(Ruoli.CAPITANO).size());
-                break;
-            case ATTACCO_ALIENO:
-                System.out.println("Evento: Attacco Alieno\n"+"Vuoi combattere (c) o fuggire (f)?");
-                if(scanner.next().equals("c"))
-                    Soluzione.battaglia(flotta.getMembriTipo(Ruoli.SOLDATO).size(), flotta.getModuliTipo(TipiModulo.COMBATTIVO).size());
-                else
-                    Soluzione.fuga(flotta.getMembriTipo(Ruoli.CAPITANO).size());
-                break;
-            case INTRUSIONE_ALIENA:
-                System.out.println("Evento: Intrusione Aliena");
-                Soluzione.controlloMembri(flotta.getMembriTipo(Ruoli.SCIENZIATO).size(), flotta.getModuliTipo(TipiModulo.INFERMERIA).size());
-                break;
-            case CONTAMINAZIONE:
-                System.out.println("Evento: Contaminazione\n"+"Vuoi fare il lockdown (l) o somministrare antibiotici (a)?");
-                if(scanner.next().equals("l"))
-                    Soluzione.lockdown();
-                else
-                    Soluzione.antibiotico(flotta.getMembriTipo(Ruoli.MEDICO).size(), flotta.getModuliTipo(TipiModulo.INFERMERIA).size());
-                break;
-            default:
-                break;
-        }
-    }
-    public void evento(){
-        Eventi evento = Eventi.getEvento();
-        if(evento == Eventi.NIENTE){
-            return;
-        }
-        risolviEvento(evento);
-        int giorniAggiunti = Soluzione.getGiorniAggiunti(), danniSubiti = Soluzione.getdanniSubiti(), morti = Soluzione.getMorti();
-        aumentaGiorni(giorniAggiunti);
-        flotta.danniStrutturali(danniSubiti);
-        flotta.morteMembri(morti);
-    }
-
-    public void viaggio(){
-        for(giorno=0;giorno<giorniViaggio;giorno++){
-            evento();
-            flotta.scansionaModuli();
+    public void chiamaEvento(){
+        Eventi e= Eventi.NIENTE;
+        while(e.equals(Eventi.NIENTE) && giorniViaggio>0){
+            giorniViaggio--;
             flotta.pasto();
+            e=Eventi.getEvento();
         }
-        scanner.close();
+    }
+    
+    public Eventi getEvento(){
+        return eventoAttuale;
+    }
+    
+    public String descriviEvento(){
+        switch (eventoAttuale) {
+            case CAMPO_METEORICO -> {
+                return "Appare un campo di meteore nell'orizzonte, si può provare a "
+                        + "passarci in mezzo oppure a girarci intorno";
+            }
+            case ATTACCO_ALIENO -> {
+                return "Una flotta di navi aliene si vede nei radar, lo spazio è pieno di pirati, si può provare "
+                        + "a combattere oppure a scappare";
+            }
+            case INTRUSIONE_ALIENA -> {
+                return "Tracce aliene vengono trovate a bordo di una nave, non si sa chi sia l'alieno, "
+                        + "si può fare un controllo oppure usare un membro come esca";
+            }
+            case CONTAMINAZIONE -> {
+                return "E stato trovato un batterio alieno all'interno di una nave, "
+                        + "si può iniettare a tutti un vaccino sperimentale oppure fare un lockdown per sicurezza";
+            }
+            default -> {
+                return"";
+            }
+        }
+    }
+    public String[] getBottoni(){
+        switch(eventoAttuale){
+            case CAMPO_METEORICO -> {
+                return new String[]{"Passa in mezzo", "Gira attorno"};
+            }
+            case ATTACCO_ALIENO -> {
+                return new String[]{"Combatti", "Scappa"}; 
+            }
+            case INTRUSIONE_ALIENA -> {
+                return new String[]{"Controlla i memnri", "Usa un'esca"}; 
+            }
+            case CONTAMINAZIONE -> {
+                return new String[]{"Inietta l'antibiotico", "Fai il lockdown"};
+            }
+            default -> {
+                return null;
+            }
+        }
+    }
+    public int[] risolviEvento(boolean scelta){
+        switch(scelta){
+            case true ->{
+                switch(eventoAttuale){
+                    case CAMPO_METEORICO -> {
+                        Soluzione.viaggioMeteorico(flotta.getMembriTipo(Ruoli.CAPITANO));
+                    }
+                    case ATTACCO_ALIENO -> {
+                        Soluzione.battaglia(flotta.getMembriTipo(Ruoli.SOLDATO), flotta.getModuliTipo(TipiModulo.COMBATTIVO)); 
+                    }
+                    case INTRUSIONE_ALIENA -> {
+                        Soluzione.controlloMembri(flotta.getMembriTipo(Ruoli.SCIENZIATO), flotta.getModuliTipo(TipiModulo.INFERMERIA)); 
+                    }
+                    case CONTAMINAZIONE -> {
+                        Soluzione.battaglia(flotta.getMembriTipo(Ruoli.MEDICO), flotta.getModuliTipo(TipiModulo.INFERMERIA));
+                    }
+                    default -> {
+                        return null;
+                    }
+                }
+            }
+            default ->{
+                switch(eventoAttuale){
+                    case CAMPO_METEORICO -> {
+                        Soluzione.viaggioNonMeteorico();
+                    }
+                    case ATTACCO_ALIENO -> {
+                        Soluzione.fuga(); 
+                    }
+                    case INTRUSIONE_ALIENA -> {
+                        Soluzione.esca(); 
+                    }
+                    case CONTAMINAZIONE -> {
+                       Soluzione.lockdown();
+                    }
+                    default -> {
+                        return null;
+                    }
+                }
+            }
+        }
+        return new int[]{Soluzione.getGiorniAggiunti(), Soluzione.getMorti(), Soluzione.getdanniSubiti()};
+    }
+    
+    public boolean controllaFine(){
+        boolean m=false;
+        for(Astronave a : getNavi()){
+            if(!a.getMembriVivi().isEmpty()){
+                m=true;
+            }
+        }
+        return m && giorniViaggio>0;
     }
 
     public boolean aggiungiNave(String nomeNave){
@@ -121,5 +179,11 @@ public class Viaggio {
             }
         }   
         flotta.setRazioni(numero);
+    }
+    
+    public void subisciEffetti(int[] ris){
+        this.giorniViaggio+=ris[0];
+        flotta.morteMembri(ris[1]);
+        flotta.danniStrutturali(ris[2]);
     }
 }
