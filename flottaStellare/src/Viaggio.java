@@ -38,11 +38,11 @@ public class Viaggio {
     }
     
     public void chiamaEvento(){
-        Eventi e= Eventi.NIENTE;
-        while(e.equals(Eventi.NIENTE) && giorniViaggio>0){
+        eventoAttuale= Eventi.NIENTE;
+        while(eventoAttuale.equals(Eventi.NIENTE) && giorniViaggio>0){
             giorniViaggio--;
             flotta.pasto();
-            e=Eventi.getEvento();
+            eventoAttuale=Eventi.getEvento();
         }
     }
     
@@ -133,7 +133,7 @@ public class Viaggio {
                 }
             }
         }
-        return new int[]{Soluzione.getGiorniAggiunti(), Soluzione.getMorti(), Soluzione.getdanniSubiti()};
+        return new int[]{Soluzione.getGiorniAggiunti(), Math.min(Soluzione.getMorti(), getNumeroMembri()) , Math.min(Soluzione.getdanniSubiti(), getSaluteModuli())};
     }
     
     public boolean controllaFine(){
@@ -151,6 +151,7 @@ public class Viaggio {
             return false;
         }
         flotta.aggiungiAstronave(new Astronave(nomeNave));
+        flotta.getAstronaviIntatte().getLast().inizializza();
         return true;
     }
 
@@ -185,5 +186,22 @@ public class Viaggio {
         this.giorniViaggio+=ris[0];
         flotta.morteMembri(ris[1]);
         flotta.danniStrutturali(ris[2]);
+    }
+    
+    public int getNumeroMembri(){
+        int i =0;
+        for(Astronave a : flotta.getAstronaviIntatte()){
+            i+=a.getMembriVivi().size();
+        }
+        return i;
+    }
+    public int getSaluteModuli(){
+        int i =0;
+        for(Astronave a : flotta.getAstronaviIntatte()){
+            for(Modulo m : a.getModuliIntatti()){
+                i+=m.getSalute();
+            }
+        }
+        return i;
     }
 }

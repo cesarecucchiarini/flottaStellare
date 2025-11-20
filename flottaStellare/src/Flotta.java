@@ -51,6 +51,8 @@ public class Flotta {
         Random rnd = new Random();
         for(int i=0; i<morti; i++){
             ArrayList<Astronave> navi = this.getAstronaviIntatte();
+            if(navi.isEmpty())
+                break;
             ArrayList<Membro> membri = navi.get(rnd.nextInt(navi.size())).getMembriVivi();
             membri.get(rnd.nextInt(membri.size())).morte();
         }
@@ -60,6 +62,8 @@ public class Flotta {
         Random rnd = new Random();
         for(int i=0; i<danni; i+=10){
             ArrayList<Astronave> navi = this.getAstronaviIntatte();
+            if(navi.isEmpty())
+                break;
             ArrayList<Modulo> moduli = navi.get(rnd.nextInt(navi.size())).getModuliIntatti();
             for(Modulo m : moduli){
                 if(m.getTipo() == TipiModulo.PROTETTIVO && m.getStato()){

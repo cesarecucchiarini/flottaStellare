@@ -196,44 +196,49 @@ public class FlottaStellareUI extends javax.swing.JFrame {
 }
     
     public boolean creaFinestraYN(String contesto, String bottone1, String bottone2){
-       final boolean[] scelta = {false};
+    final boolean[] scelta = {false};
     
-        JDialog dialog = new JDialog(this, "Scelta", true);
-        dialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
-
-        JPanel mainPanel = new JPanel(new BorderLayout(10, 10));
-        mainPanel.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
-
-        JLabel messageLabel = new JLabel(contesto);
-        messageLabel.setFont(messageLabel.getFont().deriveFont(14f));
-        mainPanel.add(messageLabel, BorderLayout.CENTER);
-
-        JButton button1 = new JButton(bottone1);
-        button1.setPreferredSize(new Dimension(100, 30));
-        button1.addActionListener(e -> {
-            scelta[0] = true;
-            dialog.dispose();
-        });
-
-        JButton button2 = new JButton(bottone2);
-        button2.setPreferredSize(new Dimension(100, 30));
-        button2.addActionListener(e -> {
-            scelta[0] = false;
-            dialog.dispose();
-        });
-
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 0));
-        buttonPanel.add(button1);
-        buttonPanel.add(button2);
-        mainPanel.add(buttonPanel, BorderLayout.SOUTH);
-
-        dialog.add(mainPanel);
-        dialog.pack();
-        dialog.setLocationRelativeTo(this);
-        dialog.setVisible(true);
-
-        return scelta[0]; 
-    }
+    JDialog dialog = new JDialog(this, "Scelta", true);
+    dialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
+    JPanel mainPanel = new JPanel(new BorderLayout(10, 10));
+    mainPanel.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
+    
+    JLabel messageLabel = new JLabel(contesto);
+    messageLabel.setFont(messageLabel.getFont().deriveFont(14f));
+    mainPanel.add(messageLabel, BorderLayout.CENTER);
+    
+    JButton button1 = new JButton(bottone1);
+    button1.addActionListener(e -> {
+        scelta[0] = true;
+        dialog.dispose();
+    });
+    
+    JButton button2 = new JButton(bottone2);
+    button2.addActionListener(e -> {
+        scelta[0] = false;
+        dialog.dispose();
+    });
+    
+    // Use BoxLayout for vertical stacking
+    JPanel buttonPanel = new JPanel();
+    buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.Y_AXIS));
+    
+    // Center the buttons horizontally
+    button1.setAlignmentX(Component.CENTER_ALIGNMENT);
+    button2.setAlignmentX(Component.CENTER_ALIGNMENT);
+    
+    buttonPanel.add(button1);
+    buttonPanel.add(Box.createVerticalStrut(10)); // 10px gap between buttons
+    buttonPanel.add(button2);
+    
+    mainPanel.add(buttonPanel, BorderLayout.SOUTH);
+    dialog.add(mainPanel);
+    dialog.pack();
+    dialog.setLocationRelativeTo(this);
+    dialog.setVisible(true);
+    
+    return scelta[0]; 
+}
     
     public String stringInput(String contesto){
         String input="";
@@ -260,6 +265,8 @@ public class FlottaStellareUI extends javax.swing.JFrame {
     
     public void aggiornaNavi(){
         listaNavi.clear();
+        listaMembri.clear();
+        listaModuli.clear();
         for(Astronave a : viaggio.getNavi()){
             listaNavi.addElement(a.getNome());
         }
@@ -302,7 +309,6 @@ public class FlottaStellareUI extends javax.swing.JFrame {
                 try {
                     Thread.sleep(50); // 50ms delay
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
                     break;
                 }
             }
@@ -558,6 +564,14 @@ public class FlottaStellareUI extends javax.swing.JFrame {
         btn_iniziaViaggio.setEnabled(false);
         btn_iniziaViaggio.setVisible(false);
         
+        if(!viaggio.controllaFine()){
+            btn_avanti.setEnabled(false);
+            btn_avanti.setVisible(false);
+            stringaLetta="La fine del viaggio è arrivata";
+            scriviMessaggio(stringaLetta);
+            return;
+        }
+        
         stringaLetta="Il viaggio è iniziato, le navi spiccano il volo e i membri sperano nel meglio";
         scriviMessaggio(stringaLetta);
     }//GEN-LAST:event_btn_iniziaViaggioMouseClicked
@@ -565,31 +579,41 @@ public class FlottaStellareUI extends javax.swing.JFrame {
     //controllare
     private void btn_avantiMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_avantiMouseClicked
         if(threadScrittura.isAlive()){
-            threadScrittura.
+            threadScrittura.interrupt();
+            tArea_storia.setText(stringaLetta);
+            return;
         }
+        tArea_storia.setText("");
         if(!fareRiparazioni){
             fareRiparazioni = true;
-            viaggio.getEvento();
+            viaggio.chiamaEvento();
+            lbl_giorniRimasti.setText("giorni rimasti: "+viaggio.getGiorniRimasti());
+            lbl_razioniRimaste.setText("razioni rimaste: "+viaggio.getFlotta().getRazioni());
             if(!viaggio.controllaFine()){
                 btn_avanti.setEnabled(false);
-                scriviMessaggio("La fine del viaggio è arrivata");
+                btn_avanti.setVisible(false);
+                stringaLetta="La fine del viaggio è arrivata";
+                scriviMessaggio(stringaLetta);
                 return;
             }
-            lbl_giorniRimasti.setText("giorni rimasti: "+viaggio.getGiorniRimasti());
             int[] ris = viaggio.risolviEvento(creaFinestraYN(viaggio.descriviEvento(), viaggio.getBottoni()[0], viaggio.getBottoni()[1]));
-            stringaLetta="I giorni aggiunti sono stati: "+ris[0]+"\nImorti sono stati: "+ris[1]+"\nI danni subiti sono stati: "+ris[2];
+            stringaLetta="I giorni aggiunti sono stati: "+ris[0]+"\nI morti sono stati: "+ris[1]+"\nI danni subiti sono stati: "+ris[2];
             scriviMessaggio(stringaLetta);
             viaggio.subisciEffetti(ris);
+            lbl_giorniRimasti.setText("giorni rimasti: "+viaggio.getGiorniRimasti());
+            aggiornaNavi();
             if(!viaggio.controllaFine()){
                 btn_avanti.setEnabled(false);
-                scriviMessaggio("La fine del viaggio è arrivata");
+                btn_avanti.setVisible(false);
+                stringaLetta="La fine del viaggio è arrivata";
+                scriviMessaggio(stringaLetta);
             }
             return;
         }
         stringaLetta="I giorni che ci sono voluti per le riparazioni sono: "+viaggio.getFlotta().scansionaModuli();
         scriviMessaggio(stringaLetta);
         lbl_giorniRimasti.setText("giorni rimasti: "+viaggio.getGiorniRimasti());
-        fareRiparazioni=true;
+        fareRiparazioni=false;
     }//GEN-LAST:event_btn_avantiMouseClicked
 
     /**
