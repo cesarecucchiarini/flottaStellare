@@ -50,6 +50,9 @@ public class Flotta {
     public ArrayList<Astronave> getAstronaviIntatte(){
         return astronavi.stream().filter(a -> a.getStato()).collect(Collectors.toCollection(ArrayList::new));
     }
+    public ArrayList<Astronave> getAstronavi(){
+        return astronavi;
+    }
     
     public void morteMembri(int morti){
         Random rnd = new Random();
@@ -87,7 +90,7 @@ public class Flotta {
                 tempoAggiunto+=modulo.ripara();
             }
         }
-        return (int)tempoAggiunto/(ingegneri+1);
+        return (int)Math.floor((tempoAggiunto/(ingegneri+1))/10);
     }
 
     public int getMembriTipo(Ruoli ruolo){

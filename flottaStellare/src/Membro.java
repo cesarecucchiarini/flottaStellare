@@ -6,7 +6,7 @@ public class Membro {
 
     public Membro(String nome, Ruoli ruolo){
         this.nome = nome;
-        this.ruolo = ruolo;
+        this.ruolo = ruolo.name().equals("RANDOM") ? Ruoli.getRuolo() : ruolo;
     }
 
     public Membro(String nome){
@@ -15,7 +15,7 @@ public class Membro {
     }
 
     public String getNome() {
-        return nome;
+        return stato ? nome : "<html><s>"+nome+"</s></html>";
     }
 
     public Ruoli getRuolo() {

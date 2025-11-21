@@ -12,6 +12,9 @@ public class Modulo {
     public TipiModulo getTipo() {
         return tipo;
     }
+    public String getTipoString(){
+        return stato ? tipo.name() : "<html><s>"+tipo.name()+"</s></html>";
+    }
 
     public boolean getStato() {
         return stato;

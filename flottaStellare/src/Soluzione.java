@@ -9,30 +9,34 @@ public class Soluzione {
     
     public static void fuga(){
         giorniAggiunti = rnd.nextInt(10);
+        if(rnd.nextInt(2)==1){
+            morti=rnd.nextInt(1, 10);
+            danniSubiti=rnd.nextInt(20, 51);
+        }
     }
     
     public static void battaglia(int soldati, int moduli){
-        morti = (int) Math.floor(rnd.nextInt(30)/(soldati+moduli+1));
-        giorniAggiunti = rnd.nextInt(5)+1;
-        danniSubiti = giorniAggiunti*15 - moduli*4;
+        morti = rnd.nextInt(Math.max(0, 30-soldati-moduli));
+        giorniAggiunti = rnd.nextInt(1,6);
+        danniSubiti = Math.max(0, giorniAggiunti*10 - moduli*4);
     }
     
     public static void controlloMembri(int scienziati, int moduli){
-        giorniAggiunti = (int) Math.floor((rnd.nextInt(10)+2)/(scienziati+moduli+1));
-        morti = rnd.nextInt(6)-moduli;
+        morti = rnd.nextInt(2, Math.max(0,10-scienziati-moduli));
+        giorniAggiunti = rnd.nextInt(Math.max(0, 6-moduli));
     }
     
     public static void esca(){
-        morti = 1+rnd.nextInt(5);
+        morti = rnd.nextInt(1,6);
     }
     
     public static void viaggioMeteorico(int capitani){
-        giorniAggiunti = (int) Math.floor((rnd.nextInt(6)+2)/(capitani+1));
-        danniSubiti = (int) Math.floor(giorniAggiunti*15/(capitani+1));
+        giorniAggiunti = rnd.nextInt(2, Math.max(0, 6-capitani));
+        danniSubiti = giorniAggiunti*10 - capitani*4;
     }
     
     public static void viaggioNonMeteorico(){
-        giorniAggiunti = rnd.nextInt(6)+3;
+        giorniAggiunti = rnd.nextInt(3, 9);
     }
     
     public static void lockdown(){
@@ -41,8 +45,8 @@ public class Soluzione {
     }
     
     public static void antibiotico(int medici, int moduli){
-        giorniAggiunti = (int) Math.floor((rnd.nextInt(5)+1)/(medici+moduli+1));
-        morti = (int) Math.floor(rnd.nextInt(15)/(medici+moduli+1));
+        giorniAggiunti = rnd.nextInt(Math.max(0, 5-medici-moduli));
+        morti = rnd.nextInt(Math.max(0, 15-medici-moduli));
     }
     
     public static int getMorti(){

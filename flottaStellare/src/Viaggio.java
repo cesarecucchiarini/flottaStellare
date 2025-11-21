@@ -28,16 +28,25 @@ public class Viaggio {
         return flotta;
     }
     
-    public ArrayList<Astronave> getNavi(){
+    public ArrayList<Astronave> getNaviIntatte(){
         return flotta.getAstronaviIntatte();
     }
-    
-    public ArrayList<Membro> getMembri(int index){
+     public ArrayList<Astronave> getNavi(){
+        return flotta.getAstronavi();
+    }
+    public ArrayList<Membro> getMembriVivi(int index){
         return flotta.getAstronaviIntatte().get(index).getMembriVivi();
     }
-    public ArrayList<Modulo> getModuli(int index){
+    public ArrayList<Membro> getMembri(int index){
+        return flotta.getAstronavi().get(index).getMembri();
+    }
+    public ArrayList<Modulo> getModuliIntatti(int index){
         return flotta.getAstronaviIntatte().get(index).getModuliIntatti();
     }
+    public ArrayList<Modulo> getModuli(int index){
+        return flotta.getAstronavi().get(index).getModuli();
+    }
+    
     
     public int chiamaEvento(){
         mortiFame=0;
@@ -142,7 +151,7 @@ public class Viaggio {
     
     public boolean controllaFine(){
         boolean m=false;
-        for(Astronave a : getNavi()){
+        for(Astronave a : getNaviIntatte()){
             if(!a.getMembriVivi().isEmpty()){
                 m=true;
             }
@@ -217,5 +226,12 @@ public class Viaggio {
         if(getNumeroMembri()==0)
             return "Tutti i membri della flotta sono morti, il viaggio non può continuare";       
         return null;
+    }
+    
+    public int scansionaModuli(){
+        int t;
+        t=flotta.scansionaModuli();
+        giorniTot+=t;
+        return t;
     }
 }

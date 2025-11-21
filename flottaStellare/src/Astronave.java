@@ -16,12 +16,19 @@ public class Astronave {
         membri.add(new Membro(nome+" #"+0, Ruoli.CAPITANO));
     }
     
+    public ArrayList<Membro> getMembri(){
+        return membri;
+    }
+    
     public void setFlotta(Flotta flotta){
         this.flotta = flotta;
     }
     
     public String getNome() {
         return nome;
+    }
+    public String getNomeIntatto(){
+        return stato ? nome : "<html><s>"+nome+"</s></html>";
     }
 
     public boolean getStato() {
@@ -36,10 +43,14 @@ public class Astronave {
             }
             if(!flotta.getAstronaviIntatte().isEmpty()){
                 Random rnd = new Random();
-                while(membri.size()>0){
-                    Astronave nave = flotta.getAstronaviIntatte().get(rnd.nextInt(flotta.getAstronaviIntatte().size()));
-                    nave.aggiungiMembro(membri.get(0));
-                    this.rimuoviMembro(membri.get(0));
+                 ArrayList<Membro> membriVivi = getMembriVivi();
+                while(membriVivi.size()>0){
+                    Astronave nave = flotta.getAstronaviIntatte().get(rnd.nextInt(flotta.getAstronaviIntatte().size()));                  
+                    for(int i =0; i< membriVivi.size(); i+=0){
+                        nave.aggiungiMembro(membriVivi.get(0));
+                        this.rimuoviMembro(membriVivi.get(0));
+                        membriVivi.remove(0);
+                    }    
                 }
             }
             else{

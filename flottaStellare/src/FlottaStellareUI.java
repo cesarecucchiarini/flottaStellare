@@ -257,7 +257,7 @@ public class FlottaStellareUI extends javax.swing.JFrame {
         return input;
     }
     public Ruoli ruoloInput(String contesto){
-        return creaFinestraScelta(contesto, Ruoli.getRuoli());
+        return creaFinestraScelta(contesto, Ruoli.getSceltaRuoli());
     }
     public ArrayList<TipiModulo> tipiModuloInput(String contesto){
         return creaFinestraSceltaMultipla(contesto, TipiModulo.getTipiModulo());
@@ -268,7 +268,7 @@ public class FlottaStellareUI extends javax.swing.JFrame {
         listaMembri.clear();
         listaModuli.clear();
         for(Astronave a : viaggio.getNavi()){
-            listaNavi.addElement(a.getNome());
+            listaNavi.addElement(a.getNomeIntatto());
         }
     }
     public void aggiornaMembri(){
@@ -280,7 +280,7 @@ public class FlottaStellareUI extends javax.swing.JFrame {
     public void aggiornaModuli(){
         listaModuli.clear();
         for(Modulo m : viaggio.getModuli(lst_navi.getSelectedIndex())){
-            listaModuli.addElement(m.getTipo().name());
+            listaModuli.addElement(m.getTipoString());
         }
     }
     
@@ -314,6 +314,7 @@ public class FlottaStellareUI extends javax.swing.JFrame {
         });
         threadScrittura.start();
     }
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -517,7 +518,7 @@ public class FlottaStellareUI extends javax.swing.JFrame {
             mostraMessaggio("Impossibile aggiungere il membro");
             return;
         }
-        viaggio.aggiungiMembri(viaggio.getNavi().get(lst_navi.getSelectedIndex()),intInput("Dimmi il numero dei membri da aggiungere"), ruoloInput("Dimmi il ruolo dei membri da aggiungere"));
+        viaggio.aggiungiMembri(viaggio.getNaviIntatte().get(lst_navi.getSelectedIndex()),intInput("Dimmi il numero dei membri da aggiungere"), ruoloInput("Dimmi il ruolo dei membri da aggiungere"));
         aggiornaMembri();
         lbl_razioniRimaste.setText("razioni: "+viaggio.getFlotta().getRazioni());
         mostraMessaggio("Membri aggiunti");
@@ -529,7 +530,7 @@ public class FlottaStellareUI extends javax.swing.JFrame {
             return;
         }
         //da modificare
-        viaggio.aggiungiModulo(viaggio.getNavi().get(lst_navi.getSelectedIndex()), intInput("Dimmi la salute dei moduli"), tipiModuloInput("Dimmi il tipo dei moduli"));
+        viaggio.aggiungiModulo(viaggio.getNaviIntatte().get(lst_navi.getSelectedIndex()), intInput("Dimmi la salute dei moduli"), tipiModuloInput("Dimmi il tipo dei moduli"));
         aggiornaModuli();
         mostraMessaggio("Moduli aggiunti");
     }//GEN-LAST:event_btn_aggiungiModuloMouseClicked
@@ -554,7 +555,7 @@ public class FlottaStellareUI extends javax.swing.JFrame {
     private void lst_membriMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lst_membriMouseClicked
         if(lst_membri.getSelectedIndex()!=-1){
             lst_moduli.clearSelection();
-            lbl_info.setText("ruolo: " + viaggio.getFlotta().getAstronaviIntatte().get(lst_navi.getSelectedIndex()).getMembriVivi().get(lst_membri.getSelectedIndex()).getRuolo().name());lst_moduli.clearSelection();
+            lbl_info.setText("ruolo: " + viaggio.getNavi().get(lst_navi.getSelectedIndex()).getMembri().get(lst_membri.getSelectedIndex()).getRuolo().name());
         }
     }//GEN-LAST:event_lst_membriMouseClicked
 
@@ -622,7 +623,7 @@ public class FlottaStellareUI extends javax.swing.JFrame {
             return;
         }
         if(viaggio.controllaFine()){
-            stringaLetta="I giorni che ci sono voluti per le riparazioni sono: "+viaggio.getFlotta().scansionaModuli();
+            stringaLetta="I giorni che ci sono voluti per le riparazioni sono: "+viaggio.scansionaModuli();
             scriviMessaggio(stringaLetta);
             lbl_giorniTot.setText("giorni totali: "+viaggio.getGiorniTot());
             fareRiparazioni=false;
