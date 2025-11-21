@@ -459,7 +459,7 @@ public class FlottaStellareUI extends javax.swing.JFrame {
 
         tArea_storia.setBackground(new java.awt.Color(0, 0, 0));
         tArea_storia.setColumns(20);
-        tArea_storia.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        tArea_storia.setFont(new java.awt.Font("Monospaced", 0, 18)); // NOI18N
         tArea_storia.setForeground(new java.awt.Color(255, 255, 255));
         tArea_storia.setRows(5);
         tArea_storia.setText("eventi");
@@ -470,7 +470,7 @@ public class FlottaStellareUI extends javax.swing.JFrame {
         jScrollPane5.setBounds(10, 10, 440, 330);
 
         btn_avanti.setBackground(new java.awt.Color(0, 0, 0));
-        btn_avanti.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        btn_avanti.setFont(new java.awt.Font("Monospaced", 0, 18)); // NOI18N
         btn_avanti.setForeground(new java.awt.Color(242, 242, 242));
         btn_avanti.setText("avanti");
         btn_avanti.setBorder(null);
