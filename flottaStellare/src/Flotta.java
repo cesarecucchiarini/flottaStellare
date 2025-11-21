@@ -32,15 +32,19 @@ public class Flotta {
         razioni+=razioniNave*membri;
     }
     
-    public void pasto(){
+    public int pasto(){
+        int morti=0;
         for(Astronave astronave : this.getAstronaviIntatte()){
             for(Membro membro : astronave.getMembriVivi()){
                 if(razioni>0)
                     razioni--;
-                else
-                    membro.morte();
+                else{
+                    membro.morteInNave();
+                    morti++;
+                }
             }
         }
+        return morti;
     }
     
     public ArrayList<Astronave> getAstronaviIntatte(){
@@ -54,7 +58,7 @@ public class Flotta {
             if(navi.isEmpty())
                 break;
             ArrayList<Membro> membri = navi.get(rnd.nextInt(navi.size())).getMembriVivi();
-            membri.get(rnd.nextInt(membri.size())).morte();
+            membri.get(rnd.nextInt(membri.size())).morteInNave();
         }
     }
     

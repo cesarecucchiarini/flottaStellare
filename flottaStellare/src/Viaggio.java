@@ -1,16 +1,15 @@
 
 import java.util.ArrayList;
-import java.util.Scanner;
 
 public class Viaggio {
-    private int giorniViaggio;
-    private int giorno;
+    private int giorniViaggio=0;
+    private int giorniTot;
     private Flotta flotta;
-    private Scanner scanner = new Scanner(System.in);
     private Eventi eventoAttuale;
+    private int mortiFame;
 
     public Viaggio(int giorniViaggio, Flotta flotta) {
-        this.giorniViaggio = giorniViaggio;
+        this.giorniTot = giorniViaggio;
         this.flotta = flotta;
     }
 
@@ -18,8 +17,11 @@ public class Viaggio {
         this.giorniViaggio += giorni;
     }
     
-    public int getGiorniRimasti(){
+    public int getGiornoAttuale(){
         return giorniViaggio;
+    }
+    public int getGiorniTot(){
+        return giorniTot;
     }
     
     public Flotta getFlotta(){
@@ -37,13 +39,15 @@ public class Viaggio {
         return flotta.getAstronaviIntatte().get(index).getModuliIntatti();
     }
     
-    public void chiamaEvento(){
+    public int chiamaEvento(){
+        mortiFame=0;
         eventoAttuale= Eventi.NIENTE;
-        while(eventoAttuale.equals(Eventi.NIENTE) && giorniViaggio>0){
-            giorniViaggio--;
-            flotta.pasto();
+        while(eventoAttuale.equals(Eventi.NIENTE) && giorniViaggio<giorniTot){
+            giorniViaggio++;
+            mortiFame+=flotta.pasto();
             eventoAttuale=Eventi.getEvento();
         }
+        return mortiFame;
     }
     
     public Eventi getEvento(){
@@ -82,7 +86,7 @@ public class Viaggio {
                 return new String[]{"Combatti", "Scappa"}; 
             }
             case INTRUSIONE_ALIENA -> {
-                return new String[]{"Controlla i memnri", "Usa un'esca"}; 
+                return new String[]{"Controlla i membri", "Usa un'esca"}; 
             }
             case CONTAMINAZIONE -> {
                 return new String[]{"Inietta l'antibiotico", "Fai il lockdown"};
@@ -143,7 +147,7 @@ public class Viaggio {
                 m=true;
             }
         }
-        return m && giorniViaggio>0;
+        return m && giorniViaggio<giorniTot;
     }
 
     public boolean aggiungiNave(String nomeNave){
@@ -183,7 +187,7 @@ public class Viaggio {
     }
     
     public void subisciEffetti(int[] ris){
-        this.giorniViaggio+=ris[0];
+        this.giorniTot+=ris[0];
         flotta.morteMembri(ris[1]);
         flotta.danniStrutturali(ris[2]);
     }
@@ -203,5 +207,15 @@ public class Viaggio {
             }
         }
         return i;
+    }
+    
+    public String getMotivoFine(){
+        if(giorniViaggio==giorniTot)
+            return "La flotta ha raggiunto la sua destinazione";
+        if(mortiFame>0)
+            return "I membri sono morti di fame";
+        if(getNumeroMembri()==0)
+            return "Tutti i membri della flotta sono morti, il viaggio non può continuare";       
+        return null;
     }
 }

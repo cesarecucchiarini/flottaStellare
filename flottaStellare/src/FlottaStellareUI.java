@@ -288,8 +288,7 @@ public class FlottaStellareUI extends javax.swing.JFrame {
         Flotta f = new Flotta(stringInput("Dimmi il nome della flotta"), intInput("Dimmi il numero di razioni per membro"));
         viaggio = new Viaggio(intInput("Dimmi il numero di giorni"), f);
         jLabel1.setText("Nome della flotta: "+viaggio.getFlotta().getNome());
-        lbl_giorniRimasti.setText("giorni rimasti: "+ viaggio.getGiorniRimasti());
-        lbl_razioniRimaste.setText("razioni rimaste: "+ viaggio.getFlotta().getRazioni());
+        lbl_giorniTot.setText("giorni totali: "+ viaggio.getGiorniTot());
         
         lst_navi.setModel(listaNavi);
         lst_moduli.setModel(listaModuli);
@@ -337,7 +336,7 @@ public class FlottaStellareUI extends javax.swing.JFrame {
         jLabel5 = new javax.swing.JLabel();
         lbl_info = new javax.swing.JLabel();
         lbl_razioniRimaste = new javax.swing.JLabel();
-        lbl_giorniRimasti = new javax.swing.JLabel();
+        lbl_giornoAttuale = new javax.swing.JLabel();
         btn_aggiungiMembro = new javax.swing.JButton();
         btn_aggiungiModulo = new javax.swing.JButton();
         jPanel1 = new javax.swing.JPanel();
@@ -345,6 +344,7 @@ public class FlottaStellareUI extends javax.swing.JFrame {
         tArea_storia = new javax.swing.JTextArea();
         btn_avanti = new javax.swing.JButton();
         btn_iniziaViaggio = new javax.swing.JButton();
+        lbl_giorniTot = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         getContentPane().setLayout(null);
@@ -421,14 +421,14 @@ public class FlottaStellareUI extends javax.swing.JFrame {
         lbl_info.setBounds(500, 320, 160, 20);
 
         lbl_razioniRimaste.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
-        lbl_razioniRimaste.setText("razioni rimaste:");
+        lbl_razioniRimaste.setText("razioni rimaste: 0");
         getContentPane().add(lbl_razioniRimaste);
-        lbl_razioniRimaste.setBounds(800, 50, 230, 25);
+        lbl_razioniRimaste.setBounds(800, 70, 230, 25);
 
-        lbl_giorniRimasti.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
-        lbl_giorniRimasti.setText("giorni rimasti: ");
-        getContentPane().add(lbl_giorniRimasti);
-        lbl_giorniRimasti.setBounds(800, 20, 230, 25);
+        lbl_giornoAttuale.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        lbl_giornoAttuale.setText("giorno attuale: 0");
+        getContentPane().add(lbl_giornoAttuale);
+        lbl_giornoAttuale.setBounds(800, 40, 230, 25);
 
         btn_aggiungiMembro.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         btn_aggiungiMembro.setText("Aggiungi membri");
@@ -493,6 +493,11 @@ public class FlottaStellareUI extends javax.swing.JFrame {
         });
         getContentPane().add(btn_iniziaViaggio);
         btn_iniziaViaggio.setBounds(70, 700, 220, 40);
+
+        lbl_giorniTot.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        lbl_giorniTot.setText("giorni totali: 0");
+        getContentPane().add(lbl_giorniTot);
+        lbl_giorniTot.setBounds(800, 10, 230, 25);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -567,7 +572,7 @@ public class FlottaStellareUI extends javax.swing.JFrame {
         if(!viaggio.controllaFine()){
             btn_avanti.setEnabled(false);
             btn_avanti.setVisible(false);
-            stringaLetta="La fine del viaggio è arrivata";
+            stringaLetta=viaggio.getMotivoFine();
             scriviMessaggio(stringaLetta);
             return;
         }
@@ -584,36 +589,44 @@ public class FlottaStellareUI extends javax.swing.JFrame {
             return;
         }
         tArea_storia.setText("");
+        if(!viaggio.controllaFine()){
+            btn_avanti.setEnabled(false);
+            btn_avanti.setVisible(false);
+            stringaLetta=viaggio.getMotivoFine();
+            scriviMessaggio(stringaLetta);
+            return;
+        }
         if(!fareRiparazioni){
+            int morti;
             fareRiparazioni = true;
-            viaggio.chiamaEvento();
-            lbl_giorniRimasti.setText("giorni rimasti: "+viaggio.getGiorniRimasti());
+            morti = viaggio.chiamaEvento();
+            lbl_giornoAttuale.setText("giorno attuale: "+viaggio.getGiornoAttuale());
             lbl_razioniRimaste.setText("razioni rimaste: "+viaggio.getFlotta().getRazioni());
             if(!viaggio.controllaFine()){
                 btn_avanti.setEnabled(false);
                 btn_avanti.setVisible(false);
-                stringaLetta="La fine del viaggio è arrivata";
+                stringaLetta=viaggio.getMotivoFine();
                 scriviMessaggio(stringaLetta);
                 return;
             }
             int[] ris = viaggio.risolviEvento(creaFinestraYN(viaggio.descriviEvento(), viaggio.getBottoni()[0], viaggio.getBottoni()[1]));
-            stringaLetta="I giorni aggiunti sono stati: "+ris[0]+"\nI morti sono stati: "+ris[1]+"\nI danni subiti sono stati: "+ris[2];
+            if(morti>0)
+                stringaLetta="Il giorno "+ viaggio.getGiornoAttuale() + " i morti di fame sono stati: "+ morti + "\nI giorni aggiunti sono stati: "+ris[0]+"\nI morti sono stati: "+ris[1]+"\nI danni subiti sono stati: "+ris[2];
+            else
+                stringaLetta="Il giorno "+ viaggio.getGiornoAttuale() + "\nI giorni aggiunti sono stati: "+ris[0]+"\nI morti sono stati: "+ris[1]+"\nI danni subiti sono stati: "+ris[2];
+
             scriviMessaggio(stringaLetta);
             viaggio.subisciEffetti(ris);
-            lbl_giorniRimasti.setText("giorni rimasti: "+viaggio.getGiorniRimasti());
+            lbl_giorniTot.setText("giorni totali: "+viaggio.getGiorniTot());
             aggiornaNavi();
-            if(!viaggio.controllaFine()){
-                btn_avanti.setEnabled(false);
-                btn_avanti.setVisible(false);
-                stringaLetta="La fine del viaggio è arrivata";
-                scriviMessaggio(stringaLetta);
-            }
             return;
         }
-        stringaLetta="I giorni che ci sono voluti per le riparazioni sono: "+viaggio.getFlotta().scansionaModuli();
-        scriviMessaggio(stringaLetta);
-        lbl_giorniRimasti.setText("giorni rimasti: "+viaggio.getGiorniRimasti());
-        fareRiparazioni=false;
+        if(viaggio.controllaFine()){
+            stringaLetta="I giorni che ci sono voluti per le riparazioni sono: "+viaggio.getFlotta().scansionaModuli();
+            scriviMessaggio(stringaLetta);
+            lbl_giorniTot.setText("giorni totali: "+viaggio.getGiorniTot());
+            fareRiparazioni=false;
+        }
     }//GEN-LAST:event_btn_avantiMouseClicked
 
     /**
@@ -656,7 +669,8 @@ public class FlottaStellareUI extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane5;
-    private javax.swing.JLabel lbl_giorniRimasti;
+    private javax.swing.JLabel lbl_giorniTot;
+    private javax.swing.JLabel lbl_giornoAttuale;
     private javax.swing.JLabel lbl_info;
     private javax.swing.JLabel lbl_razioniRimaste;
     private javax.swing.JList<String> lst_membri;

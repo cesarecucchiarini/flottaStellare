@@ -31,15 +31,20 @@ public class Astronave {
     public void distruggiNave() {
         if(this.getMembriVivi().isEmpty() || !this.moduli.get(TipiModulo.PILOTAGGIO).getStato()){
             this.stato = false;
-            Random rnd = new Random();
+            for(Modulo modulo : moduli.values()) {
+                modulo.distruggi();
+            }
             if(!flotta.getAstronaviIntatte().isEmpty()){
+                Random rnd = new Random();
                 while(membri.size()>0){
                     Astronave nave = flotta.getAstronaviIntatte().get(rnd.nextInt(flotta.getAstronaviIntatte().size()));
                     nave.aggiungiMembro(membri.get(0));
                     this.rimuoviMembro(membri.get(0));
                 }
-                for(Modulo modulo : moduli.values()) {
-                modulo.distruggi();
+            }
+            else{
+                for(Membro m : getMembriVivi()){
+                    m.morte();
                 }
             }
         }
@@ -66,7 +71,7 @@ public class Astronave {
     }
 
     public void morteMembri() {
-        getMembriVivi().get(new Random().nextInt(getMembriVivi().size())).morte();
+        getMembriVivi().get(new Random().nextInt(getMembriVivi().size())).morteInNave();
     }
 
     public ArrayList<Membro> getMembriVivi() {

@@ -54,6 +54,7 @@ public class Soluzione {
     public static int getdanniSubiti(){
         int t = danniSubiti;
         danniSubiti=0;
+        t = ((int)(t/10)) * 10;
         return t;
     }
     

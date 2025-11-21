@@ -20,14 +20,17 @@ public class Modulo {
     public void subisciDanno(int danno) {
         this.salute -= danno;
         if(!this.stato)
-            this.distruggi();
+            this.distruggiInNave();
     }
 
-    public void distruggi(){
+    public void distruggiInNave(){
         if(this.stato){
             this.stato=false;
             astronave.distruggiNave();
         }
+    }
+    public void distruggi(){
+        this.stato=false;
     }
 
     public int getSalute() {

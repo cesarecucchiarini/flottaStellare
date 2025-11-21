@@ -26,9 +26,12 @@ public class Membro {
         return stato;
     }
 
-    public void morte() {
+    public void morteInNave() {
         this.stato = false;
         this.astronave.distruggiNave();
+    }
+    public void morte(){
+        this.stato=false;
     }
 
     public void setAstronave(Astronave astronave) {
