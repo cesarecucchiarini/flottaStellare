@@ -590,6 +590,7 @@ public class FlottaStellareUI extends javax.swing.JFrame {
             return;
         }
         tArea_storia.setText("");
+        aggiornaNavi();
         if(!viaggio.controllaFine()){
             btn_avanti.setEnabled(false);
             btn_avanti.setVisible(false);
