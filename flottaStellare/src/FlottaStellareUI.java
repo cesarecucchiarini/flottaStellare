@@ -22,13 +22,13 @@ public class FlottaStellareUI extends javax.swing.JFrame {
     public FlottaStellareUI(){
         initComponents();
         this.setExtendedState(JFrame.MAXIMIZED_BOTH);
-        this.setVisible(true);
         lbl_info.setText("");
         jPanel1.setVisible(false);
         tArea_storia.setBorder(null);
         tArea_storia.setLineWrap(true);
         tArea_storia.setWrapStyleWord(true);
         tArea_storia.setEditable(false);
+        this.setVisible(true);
     }
     
     public String creaFinestraDialogo(String contesto){

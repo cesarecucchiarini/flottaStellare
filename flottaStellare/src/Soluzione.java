@@ -5,6 +5,7 @@ public class Soluzione {
     private static int giorniAggiunti;
     private static int morti;
     private static int danniSubiti;
+    private static int razioni;
     private static Random rnd = new Random();
     
     public static void fuga(){
@@ -49,6 +50,15 @@ public class Soluzione {
         morti = rnd.nextInt(Math.max(0, 15-medici-moduli));
     }
     
+    public static void prendiScatole(){
+        if(rnd.nextInt(2) == 1){
+            razioni = rnd.nextInt(20, 51);
+        }
+        else{
+            razioni = rnd.nextInt(-15, -21);
+        }
+    }
+    
     public static int getMorti(){
         int t = morti;
         morti=0;
@@ -65,6 +75,12 @@ public class Soluzione {
     public static int getGiorniAggiunti(){
         int t = giorniAggiunti;
         giorniAggiunti=0;
+        return t;
+    }
+    
+    public static int getRazioni(){
+        int t = razioni;
+        razioni=0;
         return t;
     }
 }

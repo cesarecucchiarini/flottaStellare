@@ -6,6 +6,7 @@ public enum Eventi {
     CAMPO_METEORICO,
     ATTACCO_ALIENO,
     INTRUSIONE_ALIENA,
+    RISORSE_TROVATE,
     CONTAMINAZIONE;
     
     public static Eventi getEvento(){
