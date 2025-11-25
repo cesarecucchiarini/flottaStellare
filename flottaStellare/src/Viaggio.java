@@ -81,9 +81,6 @@ public class Viaggio {
                 return "E stato trovato un batterio alieno all'interno di una nave, "
                         + "si può iniettare a tutti un vaccino sperimentale oppure fare un lockdown per sicurezza";
             }
-            case RISORSE_TROVATE -> {
-                return "Durante il viaggio la flotta trova delle scatole vaganti per lo spazio, si possono aprire o lasciarle";
-            }
             default -> {
                 return"";
             }
@@ -102,9 +99,6 @@ public class Viaggio {
             }
             case CONTAMINAZIONE -> {
                 return new String[]{"Inietta l'antibiotico", "Fai il lockdown"};
-            }
-            case RISORSE_TROVATE -> {
-                return new String[]{"Prendi le scatole", "Lascia le scatole"};
             }
             default -> {
                 return null;
@@ -127,9 +121,6 @@ public class Viaggio {
                     case CONTAMINAZIONE -> {
                         Soluzione.battaglia(flotta.getMembriTipo(Ruoli.MEDICO), flotta.getModuliTipo(TipiModulo.INFERMERIA));
                     }
-                    case RISORSE_TROVATE -> {
-                        Soluzione.prendiScatole();
-                    }
                     default -> {
                         return null;
                     }
@@ -148,9 +139,6 @@ public class Viaggio {
                     }
                     case CONTAMINAZIONE -> {
                        Soluzione.lockdown();
-                    }
-                    case RISORSE_TROVATE -> {
-                        Soluzione.lasciaScatole();
                     }
                     default -> {
                         return null;
