@@ -11,6 +11,6 @@ public enum Eventi {
     
     public static Eventi getEvento(){
         Random rnd = new Random();
-        return rnd.nextInt(3)==1 ? values()[rnd.nextInt(values().length-1)+1] : NIENTE;
+        return rnd.nextInt(2)==1 ? values()[rnd.nextInt(values().length-1)+1] : NIENTE;
     }
 }

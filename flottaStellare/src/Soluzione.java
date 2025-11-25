@@ -17,14 +17,14 @@ public class Soluzione {
     }
     
     public static void battaglia(int soldati, int moduli){
-        morti = rnd.nextInt(Math.max(1, 30-soldati-moduli));
+        morti = rnd.nextInt(Math.max(0, 30-soldati-moduli));
         giorniAggiunti = rnd.nextInt(1,6);
         danniSubiti = Math.max(0, giorniAggiunti*10 - moduli*4);
     }
     
     public static void controlloMembri(int scienziati, int moduli){
-        morti = rnd.nextInt(2, Math.max(3,10-scienziati-moduli));
-        giorniAggiunti = rnd.nextInt(Math.max(1, 6-moduli));
+        morti = rnd.nextInt(2, Math.max(0,10-scienziati-moduli));
+        giorniAggiunti = rnd.nextInt(Math.max(0, 6-moduli));
     }
     
     public static void esca(){
@@ -32,7 +32,7 @@ public class Soluzione {
     }
     
     public static void viaggioMeteorico(int capitani){
-        giorniAggiunti = rnd.nextInt(2, Math.max(3, 6-capitani));
+        giorniAggiunti = rnd.nextInt(2, Math.max(0, 6-capitani));
         danniSubiti = giorniAggiunti*10 - capitani*4;
     }
     
@@ -46,8 +46,8 @@ public class Soluzione {
     }
     
     public static void antibiotico(int medici, int moduli){
-        giorniAggiunti = rnd.nextInt(Math.max(1, 5-medici-moduli));
-        morti = rnd.nextInt(Math.max(1, 15-medici-moduli));
+        giorniAggiunti = rnd.nextInt(Math.max(0, 5-medici-moduli));
+        morti = rnd.nextInt(Math.max(0, 15-medici-moduli));
     }
     
     public static void prendiScatole(){
